@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:gym/login_page.dart';
 import 'crew_page.dart';
 import 'search_page.dart';
 import 'chatbot_page.dart';
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
@@ -67,10 +71,6 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Chat',
-          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
@@ -79,4 +79,16 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+
+
+Future<File> get _localFile async {
+  const path = '/storage/emulated/0/Download';
+  return File('$path/athlete_profile.json');
+}
+
+Future<File> writeProfile(Map<String, dynamic> profile) async {
+  final file = await _localFile;
+  return file.writeAsString(json.encode(profile));
 }
