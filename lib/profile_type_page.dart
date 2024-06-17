@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'athlete_profile_page.dart';
 
-class LoginPage extends StatelessWidget {
+class ProfileType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

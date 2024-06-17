@@ -3,7 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gym/athlete_profile_world_page.dart';
-import 'package:gym/login_page.dart';
+import 'package:gym/profile_type_page.dart';
+import 'package:gym/wellcome_page.dart';
 import 'crew_page.dart';
 import 'search_page.dart';
 import 'chatbot_page.dart';
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: WelcomePage(),
        
     );
   }
