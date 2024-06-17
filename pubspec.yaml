@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   path_provider: ^2.0.11
   carousel_slider: ^4.0.0
+  provider: ^6.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,9 +61,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/avatar_pl.png
-    - assets/avatar_sl.png
-    - assets/standard.png
+    - assets/avatar_w_pl.jpeg
+    - assets/avatar_w_sl.png
+    - assets/avatar_w_s.jpeg
+    - assets/avatar_m_pl.png
+    - assets/avatar_m_sl.png
+    - assets/avatar_m_s.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

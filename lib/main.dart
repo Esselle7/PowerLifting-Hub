@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gym/athlete_profile_world_page.dart';
 import 'package:gym/login_page.dart';
 import 'crew_page.dart';
 import 'search_page.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: LoginPage(),
+       
     );
   }
 }
