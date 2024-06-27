@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:gym/athlete_profile_world_page.dart';
+import 'package:gym/user_profile_state.dart';
+import 'package:provider/provider.dart';
+import 'athlete_profile_world_page.dart';
 
 class AthleteProfilePage extends StatefulWidget {
   @override
@@ -9,82 +11,40 @@ class AthleteProfilePage extends StatefulWidget {
 }
 
 class _AthleteProfilePageState extends State<AthleteProfilePage> {
-  String _category = 'Standard';
-  bool _isMale = true;
-  int _weightClassIndex = 0;
-  bool _isAlsoPrep = false;
-  double _squat = 0;
-  double _benchPress = 0;
-  double _deadlift = 0;
-  double _dips = 0;
-  String _level = 'Base';
-
   final FocusNode _squatFocusNode = FocusNode();
   final FocusNode _benchPressFocusNode = FocusNode();
   final FocusNode _deadliftFocusNode = FocusNode();
   final FocusNode _dipsFocusNode = FocusNode();
 
   List<String> _weightClasses = ['53', '59', '66', '74', '83', '93', '105', '120', '+120'];
-  TextEditingController _crewController = TextEditingController();
-  TextEditingController _preparatoreController = TextEditingController();
-  TextEditingController _federationController = TextEditingController();
 
-   void updateProfile({
-    required String category,
-    required bool isMale,
-    required String weightClass,
-    required bool isAlsoPrep,
-    required double squat,
-    required double benchPress,
-    required double deadlift,
-    required double dips,
-    required String level,
-    required String crew,
-    required String preparatore,
-    required String federation,
-  }) {
-    setState(() {
-      _category = category;
-      _isMale = isMale;
-      _weightClassIndex = _weightClasses.indexOf(weightClass);
-      _isAlsoPrep = isAlsoPrep;
-      _squat = squat;
-      _benchPress = benchPress;
-      _deadlift = deadlift;
-      _dips = dips;
-      _level = level;
-
-      _crewController.text = crew;
-      _preparatoreController.text = preparatore;
-      _federationController.text = federation;
-    });
-  }
-  
-  void _updateLevel() {
-    double total = _squat + _benchPress + _deadlift + _dips;
+  void _updateLevel(double squat, double benchPress, double deadlift, double dips) {
+    double total = squat + benchPress + deadlift + dips;
     if (total < 100) {
-      _level = 'Base';
+      context.read<UserProfile>().level = 'Base';
     } else if (total < 200) {
-      _level = 'Medio';
+      context.read<UserProfile>().level = 'Medio';
     } else {
-      _level = 'Avanzato';
+      context.read<UserProfile>().level = 'Avanzato';
     }
+    context.read<UserProfile>().notifyListeners();
   }
 
   void _onCategoryChange(int index) {
     setState(() {
       if (index == 0) {
-        _category = 'PowerLifter';
+        context.read<UserProfile>().category = 'PowerLifter';
       } else if (index == 1) {
-        _category = 'Street Lifter';
+        context.read<UserProfile>().category = 'Street Lifter';
       } else {
-        _category = 'Standard';
+        context.read<UserProfile>().category = 'Standard';
       }
+      context.read<UserProfile>().notifyListeners();
     });
   }
 
   List<String> _getWeightClasses() {
-    return _isMale
+    return context.read<UserProfile>().isMale
         ? ['53', '59', '66', '74', '83', '93', '105', '120', '+120']
         : ['-43', '47', '52', '57', '63', '72', '84', '+84'];
   }
@@ -134,9 +94,9 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfile = context.watch<UserProfile>();
+    _weightClasses = _getWeightClasses();
     
-    //final athleteProfile = Provider.of<AthleteProfile>(context);
-    _weightClasses = _getWeightClasses(); 
     return GestureDetector(
       onTap: () {
          _unfocusAllTextFields();
@@ -151,7 +111,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
               icon: Icon(Icons.flag),
               onPressed: () {
                 setState(() {
-                  _isAlsoPrep = !_isAlsoPrep;
+                  userProfile.isAlsoPrep = !userProfile.isAlsoPrep;
                 });
               },
             ),
@@ -159,7 +119,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
               child: Text(
                 'Also Prep',
                 style: TextStyle(
-                  color: _isAlsoPrep ? Colors.green : Colors.red,
+                  color: userProfile.isAlsoPrep ? Colors.green : Colors.red,
                   fontSize: 16,
                 ),
               ),
@@ -178,18 +138,18 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                   children: [
                     Text('Sex: ', style: TextStyle(fontSize: 16)),
                     Switch(
-                      value: _isMale,
+                      value: userProfile.isMale,
                       onChanged: (value) {
                         setState(() {
-                          _isMale = value;
-                          _weightClassIndex = 0; // Reset to first weight class
+                          userProfile.isMale = value;
+                          userProfile.weightClass = _weightClasses[0]; // Reset to first weight class
                         });
                       },
                       activeColor: Colors.blue,
                       inactiveThumbColor: Colors.pink,
                       inactiveTrackColor: Colors.pink.shade100,
                     ),
-                    Text(_isMale ? 'M' : 'F', style: TextStyle(fontSize: 16)),
+                    Text(userProfile.isMale ? 'M' : 'F', style: TextStyle(fontSize: 16)),
                   ],
                 ),
                 CarouselSlider(
@@ -201,17 +161,17 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                     },
                   ),
                   items: [
-                    if (_isMale)
+                    if (userProfile.isMale)
                       'assets/avatar_m_pl.png',
-                    if (_isMale)
+                    if (userProfile.isMale)
                       'assets/avatar_m_sl.png',
-                    if (_isMale)
+                    if (userProfile.isMale)
                       'assets/avatar_m_s.jpg',
-                    if (!_isMale)
+                    if (!userProfile.isMale)
                       'assets/avatar_w_pl.jpeg',
-                    if (!_isMale)
+                    if (!userProfile.isMale)
                       'assets/avatar_w_sl.png',
-                    if (!_isMale)
+                    if (!userProfile.isMale)
                       'assets/avatar_w_s.jpeg',
                   ].map((i) {
                     return Builder(
@@ -223,7 +183,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                 ),
                 Center(
                   child: Text(
-                    _category,
+                    userProfile.category,
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -240,7 +200,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                         itemExtent: 32.0,
                         onSelectedItemChanged: (index) {
                           setState(() {
-                            _weightClassIndex = index;
+                            userProfile.weightClass = _weightClasses[index];
                           });
                         },
                         children: _weightClasses.map((String value) {
@@ -251,31 +211,31 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                   ],
                 ),
                 SizedBox(height: 20),
-                _buildNumberInput('Squat', _squat, (value) {
+                _buildNumberInput('Squat', userProfile.squat, (value) {
                   setState(() {
-                    _squat = value;
-                    _updateLevel();
+                    userProfile.squat = value;
+                    _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _squatFocusNode),
                 SizedBox(height: 20),
-                _buildNumberInput('Bench Press', _benchPress, (value) {
+                _buildNumberInput('Bench Press', userProfile.benchPress, (value) {
                   setState(() {
-                    _benchPress = value;
-                    _updateLevel();
+                    userProfile.benchPress = value;
+                    _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _benchPressFocusNode),
                 SizedBox(height: 20),
-                _buildNumberInput('Deadlift', _deadlift, (value) {
+                _buildNumberInput('Deadlift', userProfile.deadlift, (value) {
                   setState(() {
-                    _deadlift = value;
-                    _updateLevel();
+                    userProfile.deadlift = value;
+                    _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _deadliftFocusNode),
                 SizedBox(height: 20),
-                _buildNumberInput('Dips', _dips, (value) {
+                _buildNumberInput('Dips', userProfile.dips, (value) {
                   setState(() {
-                    _dips = value;
-                    _updateLevel();
+                    userProfile.dips = value;
+                    _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _dipsFocusNode),
                 SizedBox(height: 20),
@@ -283,19 +243,33 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                   child: ElevatedButton(
                     onPressed: () {
                       _unfocusAllTextFields(); // Rimuovi il focus dai TextField
+                      Provider.of<UserProfile>(context, listen: false).updateAthleteProfile(
+                        category: userProfile.category,
+                        isMale: userProfile.isMale,
+                        weightClass: userProfile.weightClass,
+                        isAlsoPrep: userProfile.isAlsoPrep,
+                        squat: userProfile.squat,
+                        benchPress: userProfile.benchPress,
+                        deadlift: userProfile.deadlift,
+                        dips: userProfile.dips,
+                        level: userProfile.level,
+                        crew: userProfile.crew,
+                        preparatore: userProfile.preparatore,
+                        federation: userProfile.federation,
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => AthleteProfileWorldPage(
-                            category: _category,
-                            isMale: _isMale,
-                            weightClass: _weightClasses[_weightClassIndex],
-                            isAlsoPrep: _isAlsoPrep,
-                            squat: _squat,
-                            benchPress: _benchPress,
-                            deadlift: _deadlift,
-                            dips: _dips,
-                            level: _level,
+                            category: userProfile.category,
+                            isMale: userProfile.isMale,
+                            weightClass: userProfile.weightClass,
+                            isAlsoPrep: userProfile.isAlsoPrep,
+                            squat: userProfile.squat,
+                            benchPress: userProfile.benchPress,
+                            deadlift: userProfile.deadlift,
+                            dips: userProfile.dips,
+                            level: userProfile.level,
                           ),
                         ),
                       );

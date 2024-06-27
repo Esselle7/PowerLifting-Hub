@@ -1,5 +1,8 @@
+import 'dart:convert'; // Per convertire la mappa in JSON
 import 'package:flutter/material.dart';
 import 'package:gym/main.dart';
+import 'package:gym/user_profile_state.dart';
+import 'package:provider/provider.dart';
 
 class AthleteProfileWorldPage extends StatefulWidget {
   final String category;
@@ -119,7 +122,7 @@ class _AthleteProfileWorldPageState extends State<AthleteProfileWorldPage> {
                 return ListTile(
                   title: Text(suggestion),
                   onTap: () {
-                     _unfocusAllTextFields();
+                    _unfocusAllTextFields();
                     setState(() {
                       controller.text = suggestion;
                       _showCrewSuggestions = false;
@@ -137,23 +140,44 @@ class _AthleteProfileWorldPageState extends State<AthleteProfileWorldPage> {
 
   void _saveProfile() {
     // Assicurati di passare i dati tra le pagine come necessario
+    final userProfile = Provider.of<UserProfile>(context, listen: false);
     Map<String, dynamic> profile = {
-      'category': widget.category,
-      'isMale': widget.isMale,
-      'weightClass': widget.weightClass,
-      'isAlsoPrep': widget.isAlsoPrep,
-      'squat': widget.squat,
-      'benchPress': widget.benchPress,
-      'deadlift': widget.deadlift,
-      'dips': widget.dips,
-      'level': widget.level,
-      'crew': _crewController.text,
-      'preparatore': _preparatoreController.text,
-      'federation': _federationController.text,
+      'personalInfo': {
+        'firstName': userProfile.firstName,
+        'lastName': userProfile.lastName,
+        'dob': userProfile.dob.toIso8601String(),
+        'email': userProfile.email,
+      },
+      'athleteInfo': {
+        'category': widget.category,
+        'isMale': widget.isMale,
+        'weightClass': widget.weightClass,
+        'isAlsoPrep': widget.isAlsoPrep,
+        'squat': widget.squat,
+        'benchPress': widget.benchPress,
+        'deadlift': widget.deadlift,
+        'dips': widget.dips,
+        'level': widget.level,
+        'crew': _crewController.text,
+        'preparatore': _preparatoreController.text,
+        'federation': _federationController.text,
+      },
     };
 
-    // Salva il profilo (implementa la logica di salvataggio)
+    if (widget.isAlsoPrep) {
+      profile['trainerInfo'] = {
+        // Aggiungi qui i dati del preparatore quando disponibili
+      };
+    }
+
+    // Converti il profilo in JSON
+    String profileJson = jsonEncode(profile);
+
+    // Salva o mostra il profilo JSON (implementa la logica di salvataggio)
     writeProfile(profile);
+
+    // Debug: stampa il JSON
+    print(profileJson);
   }
 
   @override
@@ -238,23 +262,23 @@ class _AthleteProfileWorldPageState extends State<AthleteProfileWorldPage> {
                     child: Text('Salva Profilo'),
                   ),
                 ),
-                 SizedBox(height: 20),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(Icons.arrow_back),
-                    label: Text('Torna Indietro'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.arrow_back),
+                      label: Text('Torna Indietro'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
                     ),
                   ),
                 ),
-              ),
               ],
             ),
           ),

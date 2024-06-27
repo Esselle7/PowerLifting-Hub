@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:gym/athlete_profile_world_page.dart';
 import 'package:gym/profile_type_page.dart';
+import 'package:gym/user_profile_state.dart';
 import 'package:gym/wellcome_page.dart';
 import 'crew_page.dart';
 import 'search_page.dart';
@@ -12,7 +14,12 @@ import 'profile_page.dart';
 import 'chat_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProfile(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
