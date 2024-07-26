@@ -19,6 +19,9 @@ class UserProfile with ChangeNotifier {
   String crew = '';
   String preparatore = '';
   String federation = '';
+  
+  String educationTitle = '';
+  Map<String, int> coachSkills = {};
 
   void updatePersonalInfo({
     required String firstName,
@@ -32,6 +35,23 @@ class UserProfile with ChangeNotifier {
     this.dob = dob;
     this.email = email;
     this.password = password;
+    notifyListeners();
+  }
+
+void updateCoachProfile({
+    required bool isMale,
+    required String educationTitle,
+    required bool isAlsoPrep,
+  }) {
+    this.isMale = isMale;
+    this.educationTitle = educationTitle;
+    this.isAlsoPrep = isAlsoPrep;
+    notifyListeners();
+  }
+  
+
+   void updateCoachSkills(Map<String, int> skills) {
+    coachSkills = skills;
     notifyListeners();
   }
 

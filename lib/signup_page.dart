@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym/role_profile_page.dart';
 import 'package:gym/user_profile_state.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         // Naviga alla pagina successiva
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AthleteProfilePage()),
+                          MaterialPageRoute(builder: (context) => RolePage()),
                         );
                       }
                     },

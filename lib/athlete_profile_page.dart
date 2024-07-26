@@ -289,7 +289,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                     icon: Icon(Icons.arrow_back),
                     label: Text('Torna Indietro'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.blue
                     ),
                   ),
                 ),
