@@ -1,17 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:gym/Home/home_page.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:gym/Theme/dark_theme.dart';
+import 'package:gym/Theme/light_teme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:gym/athlete_profile_world_page.dart';
-import 'package:gym/profile_type_page.dart';
-import 'package:gym/user_profile_state.dart';
 import 'package:gym/wellcome_page.dart';
-import 'crew_page.dart';
-import 'search_page.dart';
-import 'chatbot_page.dart';
-import 'profile_page.dart';
-import 'chat_page.dart';
 
 void main() {
   runApp(
@@ -26,72 +22,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gym Brainstorming',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: 'Gym',
+      theme: lightTheme, // Tema chiaro
+      darkTheme: darkTheme, // Tema scuro
+      themeMode: ThemeMode.system, // Usa il tema del sistema
       home: WelcomePage(),
-       
+      //home: HomePage(),
     );
   }
 }
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  static List<Widget> _pages = <Widget>[
-    CrewPage(),
-    SearchPage(),
-    ChatbotPage(),
-    ProfilePage(),
-    ChatPage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _pages.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: 'Crew',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chatbot',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-
 
 Future<File> get _localFile async {
   const path = '/storage/emulated/0/Download';
@@ -102,3 +41,5 @@ Future<File> writeProfile(Map<String, dynamic> profile) async {
   final file = await _localFile;
   return file.writeAsString(json.encode(profile));
 }
+
+

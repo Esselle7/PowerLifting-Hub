@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'athlete_profile_page.dart';
+import '../Athlete/athlete_profile_page.dart';
 
 class ProfileType extends StatelessWidget {
   @override
@@ -16,7 +16,7 @@ class ProfileType extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AthleteProfilePage()),
+                  MaterialPageRoute(builder: (context) => AthleteProfilePage(isBoth: false,)), // FIXME
                 );
               },
               child: Text('Crea Profilo Atleta'),

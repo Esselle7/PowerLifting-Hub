@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gym/SignUp/Athlete/athlete_profile_page.dart';
+import 'package:gym/SignUp/General/profile_world_page.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
-import 'coach_profile_world_page.dart';
-import 'user_profile_state.dart';
 
 class CoachProfileSkillsPage extends StatefulWidget {
   final bool isBoth;
@@ -58,7 +59,6 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text('Insert yout Skills'),
       ),
       body: Padding(
@@ -77,33 +77,28 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
                 child: ElevatedButton(
                   onPressed: () {
                     Provider.of<UserProfile>(context, listen: false).updateCoachSkills(_skills);
-                    Navigator.push(
+                    if(widget.isBoth == true){
+                       Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CoachProfileWorldPage(isBoth: widget.isBoth),
+                        builder: (context) => AthleteProfilePage(isBoth: false),
                       ),
                     );
+                  }
+                  else{
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileWorldPage(),
+                      ),
+                    );
+                  }
+                    
                   },
                   child: Text('Continua'),
                 ),
               ),
               SizedBox(height: 20),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(Icons.arrow_back),
-                    label: Text('Torna Indietro'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

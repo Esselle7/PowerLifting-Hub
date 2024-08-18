@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
 import 'coach_profile_skills_page.dart';
-import 'user_profile_state.dart';
 
 class CoachProfilePage extends StatefulWidget {
   final bool isBoth;
@@ -31,35 +31,16 @@ class _CoachProfilePageState extends State<CoachProfilePage> {
   @override
   Widget build(BuildContext context) {
     final userProfile = context.watch<UserProfile>();
-
+    userProfile.updateIsBoth(isBoth: widget.isBoth);
     return GestureDetector(
       onTap: () {
         _unfocusAllTextFields();
       },
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('Create Coach Profile'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.flag),
-              onPressed: () {
-                setState(() {
-                  userProfile.isAlsoPrep = !userProfile.isAlsoPrep;
-                });
-              },
-            ),
-            Center(
-              child: Text(
-                'Also Prep',
-                style: TextStyle(
-                  color: userProfile.isAlsoPrep ? Colors.green : Colors.red,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
-          ],
+          title: Text(
+            'Crea Profilo Coach',
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -67,24 +48,6 @@ class _CoachProfilePageState extends State<CoachProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('Sex: ', style: TextStyle(fontSize: 16)),
-                    Switch(
-                      value: userProfile.isMale,
-                      onChanged: (value) {
-                        setState(() {
-                          userProfile.isMale = value;
-                        });
-                      },
-                      activeColor: Colors.blue,
-                      inactiveThumbColor: Colors.pink,
-                      inactiveTrackColor: Colors.pink.shade100,
-                    ),
-                    Text(userProfile.isMale ? 'M' : 'F', style: TextStyle(fontSize: 16)),
-                  ],
-                ),
                 Center(
                   child: Image.asset(
                     userProfile.isMale ? 'assets/avatar_m_coach.png' : 'assets/avatar_f_coach.png',
@@ -93,13 +56,27 @@ class _CoachProfilePageState extends State<CoachProfilePage> {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  style: TextStyle(color: Colors.blueAccent),
                   controller: _educationTitleController,
                   focusNode: _educationTitleFocusNode,
                   decoration: InputDecoration(
                     labelText: 'Titolo di Studio',
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.blueAccent),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+                    ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).primaryColor,
+                    
                   ),
                 ),
                 SizedBox(height: 20),
@@ -122,25 +99,16 @@ class _CoachProfilePageState extends State<CoachProfilePage> {
                       );
                     },
                     child: Text('Continua'),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.arrow_back),
-                      label: Text('Torna Indietro'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                   ),
                 ),
+                SizedBox(height: 20),
               ],
             ),
           ),

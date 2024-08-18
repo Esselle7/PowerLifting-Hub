@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
-import 'athlete_profile_page.dart';
-import 'coach_profile_page.dart';
+import 'package:gym/SignUp/Coach/coach_profile_page.dart';
+import 'Athlete/athlete_profile_page.dart';
 
 class RolePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Your Role'),
-        backgroundColor: Colors.blueAccent,
+        title: Text('Tell me about you')
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.lightBlueAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -26,16 +20,22 @@ class RolePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AthleteProfilePage()),
+                  MaterialPageRoute(builder: (context) => AthleteProfilePage(isBoth: false)), // FIXME
                 );
               },
-              child: Text('I am an Athlete'),
+              child: Text(
+                'I\'m Athlete',
+                style: TextStyle(fontSize: 20), 
+                
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor:  Theme.of(context).mainColor,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
+                elevation: 5,
+                shadowColor: Colors.black45,
               ),
             ),
             SizedBox(height: 20),
@@ -48,13 +48,18 @@ class RolePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('I am a Preparator'),
+              child: Text(
+                'I\'m Preparator',
+                style: TextStyle(fontSize: 20),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor:  Theme.of(context).mainColor,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
+                elevation: 5,
+                shadowColor: Colors.black45,
               ),
             ),
             SizedBox(height: 20),
@@ -67,13 +72,18 @@ class RolePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('I am Both'),
+              child: Text(
+                'I\'m both',
+                style: TextStyle(fontSize: 20),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: Theme.of(context).mainColor,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
+                elevation: 5,
+                shadowColor: Colors.black45,
               ),
             ),
           ],
