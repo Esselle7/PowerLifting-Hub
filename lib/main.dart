@@ -23,9 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Gym',
-      theme: lightTheme, // Tema chiaro
-      darkTheme: darkTheme, // Tema scuro
-      themeMode: ThemeMode.system, // Usa il tema del sistema
+      theme: lightTheme, 
+      darkTheme: darkTheme, 
+      themeMode: ThemeMode.system,
       home: WelcomePage(),
       //home: HomePage(),
     );

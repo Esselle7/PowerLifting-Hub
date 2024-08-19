@@ -41,6 +41,20 @@ Future<List<Crew>> fetchTopCrews(String type, {required bool testMode}) async {
   return [];
 }
 
+// Simula la chiamata API per ottenere le crew
+Future<List<Crew>> fetchCrews({required bool testMode}) async {
+  if (testMode) {
+    // Lista di crew di test
+    return List.generate(
+      12,
+      (index) => Crew(name: 'TestCrew $index', province: 'Provincia', nation: 'Nazione'),
+    );
+  } else {
+    // Inserisci la logica della chiamata API per ottenere i dati reali
+    throw UnimplementedError('API call is not implemented.');
+  }
+}
+
 // Modello per i dati delle persone
 class Person {
   final String name;
@@ -51,7 +65,7 @@ class Person {
 
 // Esempio di dati per i cerchietti
 final List<Person> persons = List.generate(
-  12,
+  30,
   (index) => Person(
     name: 'Nome $index',
     color: Colors.primaries[index % Colors.primaries.length],
@@ -68,25 +82,46 @@ class ProfileWorldCrewPage extends StatefulWidget {
 }
 
 class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
+   final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
+
   late Future<List<Crew>> _provinceTopCrewsFuture;
   late Future<List<Crew>> _nationTopCrewsFuture;
 
-  // Stato per tenere traccia della selezione dei cerchietti
-  Set<int> _selectedPersons = {}; // Usa un Set per evitare duplicati
+  Set<String> _selectedCrews = {}; // Stato per tenere traccia delle crew selezionate
+  List<Crew> _filteredCrews = []; // Lista delle crew filtrate in base alla ricerca
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _provinceTopCrewsFuture = fetchTopCrews('province', testMode: widget.testMode);
     _nationTopCrewsFuture = fetchTopCrews('nation', testMode: widget.testMode);
+    _fetchCrews(); // Ottiene le crew iniziali
   }
 
-  void _toggleSelection(int index) {
+  Future<void> _fetchCrews() async {
+    final crews = await fetchCrews(testMode: widget.testMode);
     setState(() {
-      if (_selectedPersons.contains(index)) {
-        _selectedPersons.remove(index);
+      _filteredCrews = crews;
+    });
+  }
+
+  void _updateSearchQuery(String query) {
+    setState(() {
+      _searchQuery = query;
+      _filteredCrews = persons
+          .where((person) => person.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
+          .map((person) => Crew(name: person.name, province: '', nation: ''))
+          .toList();
+    });
+  }
+
+  void _toggleSelection(String crewName) {
+    setState(() {
+      if (_selectedCrews.contains(crewName)) {
+        _selectedCrews.remove(crewName);
       } else {
-        _selectedPersons.add(index);
+        _selectedCrews.add(crewName);
       }
     });
   }
@@ -95,7 +130,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.grey.withOpacity(0.1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
@@ -107,7 +142,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
           builder: (BuildContext context, ScrollController scrollController) {
             return Container(
               decoration: BoxDecoration(
-                color: Colors.black87,
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
               ),
               child: Padding(
@@ -158,150 +193,181 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
           },
         );
       },
-    );
+    ).whenComplete(() {
+      _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cerca Persone'),
-      ),
-      body: Column(
-        children: [
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // Nasconde la tastiera se clicchi altrove
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Cerca Persone'),
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                focusNode: _focusNode,
+                onChanged: _updateSearchQuery,
+                decoration: InputDecoration(
+                  labelText: 'Digita il nome della tua crew',
+                  labelStyle: TextStyle(color: Colors.blueAccent),
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                ),
+              ),
+            ),
+            Expanded(
+  child: Column(
+    children: [
+      if (_searchQuery.isNotEmpty) ...[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Crew',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+          ),
+        ),
+        if (_filteredCrews.isEmpty) ...[
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Cerca per nome',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+            child: Center(
+              child: Text(
+                'Nessuna crew trovata',
+                style: TextStyle(fontSize: 18, color: Colors.blueAccent),
               ),
             ),
           ),
-          Expanded(
-            child: ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Persone',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-                  ),
+        ] else ...[
+          // Box con dimensione dinamica per evitare overflow
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Calcola l'altezza disponibile sottraendo spazio per i bottoni e padding
+              final availableHeight = constraints.maxHeight - 100; // 100 è una stima per bottoni e padding
+              return Container(
+                height: availableHeight > 280 ? 280 : availableHeight, // Altezza fissa massima
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent, width: 2), // Bordo blu accentato
+                  borderRadius: BorderRadius.circular(12), // Arrotondamento degli angoli
                 ),
-                // Lista di cerchietti delle persone
-                GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 1,
-                  ),
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: persons.length,
-                  itemBuilder: (context, index) {
-                    final isSelected = _selectedPersons.contains(index);
-                    return GestureDetector(
-                      onTap: () => _toggleSelection(index),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Stack(
-                            alignment: Alignment.bottomLeft,
-                            children: [
-                              Container(
-                                width: 40, // Dimensione cerchietto
-                                height: 40, // Dimensione cerchietto
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Colors.green : persons[index].color,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: isSelected ? Colors.green : Colors.transparent,
-                                    width: 3,
+                 padding: EdgeInsets.only(top: 10),
+                child: SingleChildScrollView(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1,
+                    ),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(), 
+                    itemCount: _filteredCrews.length,
+                    itemBuilder: (context, index) {
+                      final crew = _filteredCrews[index];
+                      final isSelected = _selectedCrews.contains(crew.name);
+                      return GestureDetector(
+                        onTap: () => _toggleSelection(crew.name),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomLeft,
+                              children: [
+                                Container(
+                                  width: 40, // Dimensione cerchietto
+                                  height: 40, // Dimensione cerchietto
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? Colors.green : Colors.blue,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected ? Colors.green : Colors.blueAccent,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    persons[index].name[0],
-                                    style: TextStyle(color: Colors.white, fontSize: 14),
+                                if (isSelected)
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Icon(
+                                      Icons.check_circle,
+                                      size: 20,
+                                      color: Colors.blueAccent,
+                                    ),
                                   ),
-                                ),
-                              ),
-                              if (isSelected)
-                                Positioned(
-                                  bottom: -5,
-                                  left: -5,
-                                  child: Icon(
-                                    Icons.check,
-                                    size: 20,
-                                    color:  Colors.blueAccent,
-                                  ),
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: 4), // Spazio tra cerchietto e nome
-                          Text(
-                            persons[index].name,
-                            style: Theme.of(context).textTheme.innerbox,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-                // Pulsante per Top 5 Crew della Provincia
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent, // Colore di sfondo
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      elevation: 5,
-                    ),
-                    onPressed: () => _showBottomSheet('Top 5 Crew della Provincia', _provinceTopCrewsFuture),
-                    child: Text(
-                      'Top 5 Crew della Provincia',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                              ],
+                            ),
+                            SizedBox(height: 4), // Spazio tra cerchietto e nome
+                            Text(
+                              crew.name,
+                              style: TextStyle(color: Colors.blueAccent),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-                SizedBox(height: 20),
-                // Pulsante per Top 5 Crew della Nazione
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent, // Colore di sfondo
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      elevation: 5,
-                    ),
-                    onPressed: () => _showBottomSheet('Top 5 Crew della Nazione', _nationTopCrewsFuture),
-                    child: Text(
-                      'Top 5 Crew della Nazione',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ],
+      ],
+      SizedBox(height: 20),
+      // Pulsante per Top 5 Crew della Provincia
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent, // Colore di sfondo
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 5,
+          ),
+          onPressed: () => _showBottomSheet('Top 5 Crew della Provincia', _provinceTopCrewsFuture),
+          child: Text(
+            'Top 5 Crew della Provincia',
+            style: TextStyle(fontSize: 18, color: Colors.white),
+          ),
+        ),
+      ),
+      SizedBox(height: 20),
+      // Pulsante per Top 5 Crew della Nazione
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent, // Colore di sfondo
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 5,
+          ),
+          onPressed: () => _showBottomSheet('Top 5 Crew della Nazione', _nationTopCrewsFuture),
+          child: Text(
+            'Top 5 Crew della Nazione',
+            style: TextStyle(fontSize: 18, color: Colors.white),
+          ),
+        ),
+      ),
+    ],
+  ),
+)
+
+
+          ],
+        ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ProfileWorldCrewPage(testMode: true), // Imposta testMode a true o false
-  ));
 }

@@ -5,8 +5,13 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
   scaffoldBackgroundColor:  Colors.black, // Colore di sfondo della Scaffold
   mainColor: Colors.blueAccent,
   appBarTheme: AppBarTheme(
-    backgroundColor:  Colors.black, // Colore di sfondo della AppBar
-    foregroundColor: Colors.blueAccent, // Colore del testo della AppBar
+    backgroundColor:  Colors.black,
+    foregroundColor:  Colors.blueAccent,
+    titleTextStyle: TextStyle(
+    fontWeight: FontWeight.bold, // Imposta il testo in grassetto
+    color: Colors.blueAccent, // Colore del testo, se necessario
+    fontSize: 25, // Dimensione del testo, se necessario
+    ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -24,13 +29,11 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
       fontSize: 40,
       fontWeight: FontWeight.bold,
       color: Colors.blueAccent,
-      shadows: [
-        Shadow(
-          offset: Offset(2, 2),
-          blurRadius: 4,
-          color: Colors.black45,
-        ),
-      ],
+    ),
+    headline2: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color:  Colors.blueAccent,
     ),
     innerbox: TextStyle(
       fontSize: 15,

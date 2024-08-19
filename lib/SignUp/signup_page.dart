@@ -141,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         Provider.of<UserProfile>(context, listen: false).updatePersonalInfo(
                           firstName: _firstNameController.text,
                           lastName: _lastNameController.text,
-                          dob: DateFormat('dd/MM/yyyy').parse(_dobController.text),
+                          dob: _dobController.text.isNotEmpty ? DateFormat('dd/MM/yyyy').parse(_dobController.text) : DateTime.now(),
                           email: _emailController.text,
                           password: _passwordController.text,
                           username: _usernameController.text,
@@ -225,9 +225,9 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       obscureText: obscureText,
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        /*if (value == null || value.isEmpty) {
           return 'Per favore inserisci $label';
-        }
+        }*/
         return null;
       },
     );
@@ -290,9 +290,9 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        /*if (value == null || value.isEmpty) {
           return 'Per favore inserisci $label';
-        }
+        }*/
         return null;
       },
     );
