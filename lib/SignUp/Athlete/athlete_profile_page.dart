@@ -16,7 +16,16 @@ class AthleteProfilePage extends StatefulWidget {
   _AthleteProfilePageState createState() => _AthleteProfilePageState();
 }
 
+
+
 class _AthleteProfilePageState extends State<AthleteProfilePage> {
+
+  @override
+void initState() {
+  super.initState();
+  context.read<UserProfile>().category = 'POWERLIFTER';
+}
+
   final FocusNode _squatFocusNode = FocusNode();
   final FocusNode _benchPressFocusNode = FocusNode();
   final FocusNode _deadliftFocusNode = FocusNode();
@@ -190,6 +199,13 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Crea Profilo Atleta'),
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () async {
+            userProfile.reset();
+            Navigator.of(context).pop();
+          },
+        ),
         ),
         body: Container(
           padding: const EdgeInsets.all(16.0),
@@ -233,7 +249,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                 Center(
                   child: Text(
                     userProfile.category,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).mainColor),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -307,9 +323,6 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                         dips: userProfile.dips,
                         //dipsDate: _parseDate(_dipsDateController.text) ?? DateTime.now(),
                         level: userProfile.level,
-                        crew: userProfile.crew,
-                        preparatore: userProfile.preparatore,
-                        federation: userProfile.federation,
                         isAthlete: isAthlete,
                       );
                       Navigator.push(

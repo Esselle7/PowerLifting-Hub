@@ -41,6 +41,13 @@ class _CoachProfilePageState extends State<CoachProfilePage> {
           title: Text(
             'Crea Profilo Coach',
           ),
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () async {
+            userProfile.reset();
+            Navigator.of(context).pop();
+          },
+        ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

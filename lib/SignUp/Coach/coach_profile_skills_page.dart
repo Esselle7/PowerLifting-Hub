@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym/SignUp/Athlete/athlete_profile_page.dart';
+import 'package:gym/SignUp/General/profile_world_crew_page.dart';
 import 'package:gym/SignUp/General/profile_world_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
@@ -89,7 +90,7 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
                      Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileWorldPage(),
+                        builder: (context) => ProfileWorldCrewPage(testMode: true),
                       ),
                     );
                   }

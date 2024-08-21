@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
+import 'package:gym/SignUp/General/profile_world_federation_page.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:provider/provider.dart';
 
 // Modello per i dati delle crew
 class Crew {
@@ -46,7 +50,7 @@ Future<List<Crew>> fetchCrews({required bool testMode}) async {
   if (testMode) {
     // Lista di crew di test
     return List.generate(
-      12,
+      30,
       (index) => Crew(name: 'TestCrew $index', province: 'Provincia', nation: 'Nazione'),
     );
   } else {
@@ -82,7 +86,7 @@ class ProfileWorldCrewPage extends StatefulWidget {
 }
 
 class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
-   final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
+  final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
 
   late Future<List<Crew>> _provinceTopCrewsFuture;
   late Future<List<Crew>> _nationTopCrewsFuture;
@@ -194,8 +198,8 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
         );
       },
     ).whenComplete(() {
-      _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
-    });
+          _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
+        });
   }
 
   @override
@@ -208,11 +212,12 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
         appBar: AppBar(
           title: Text('Cerca Persone'),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Campo di ricerca
+              TextField(
                 focusNode: _focusNode,
                 onChanged: _updateSearchQuery,
                 decoration: InputDecoration(
@@ -222,150 +227,148 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
                 ),
               ),
-            ),
-            Expanded(
-  child: Column(
-    children: [
-      if (_searchQuery.isNotEmpty) ...[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'Crew',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
-          ),
-        ),
-        if (_filteredCrews.isEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                'Nessuna crew trovata',
-                style: TextStyle(fontSize: 18, color: Colors.blueAccent),
-              ),
-            ),
-          ),
-        ] else ...[
-          // Box con dimensione dinamica per evitare overflow
-          LayoutBuilder(
-            builder: (context, constraints) {
-              // Calcola l'altezza disponibile sottraendo spazio per i bottoni e padding
-              final availableHeight = constraints.maxHeight - 100; // 100 è una stima per bottoni e padding
-              return Container(
-                height: availableHeight > 280 ? 280 : availableHeight, // Altezza fissa massima
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueAccent, width: 2), // Bordo blu accentato
-                  borderRadius: BorderRadius.circular(12), // Arrotondamento degli angoli
-                ),
-                 padding: EdgeInsets.only(top: 10),
-                child: SingleChildScrollView(
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 1,
-                    ),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), 
-                    itemCount: _filteredCrews.length,
-                    itemBuilder: (context, index) {
-                      final crew = _filteredCrews[index];
-                      final isSelected = _selectedCrews.contains(crew.name);
-                      return GestureDetector(
-                        onTap: () => _toggleSelection(crew.name),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Stack(
-                              alignment: Alignment.bottomLeft,
-                              children: [
-                                Container(
-                                  width: 40, // Dimensione cerchietto
-                                  height: 40, // Dimensione cerchietto
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.green : Colors.blue,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected ? Colors.green : Colors.blueAccent,
-                                      width: 2,
+              SizedBox(height: 16.0),
+              // Sezione per le crew filtrate
+              Expanded(
+                child: _searchQuery.isNotEmpty
+                    ? _filteredCrews.isEmpty
+                        ? Center(
+                            child: Text(
+                              'Nessuna crew trovata',
+                              style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                            ),
+                          )
+                        : GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4, // Numero fisso di colonne
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 1,
+                            ),
+                            
+                            itemCount: _filteredCrews.length,
+                            itemBuilder: (context, index) {
+                              final crew = _filteredCrews[index];
+                              final isSelected = _selectedCrews.contains(crew.name);
+                              return GestureDetector(
+                                onTap: () => _toggleSelection(crew.name),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.bottomLeft,
+                                      children: [
+                                        Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: isSelected ? Colors.green : Colors.blue,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: isSelected ? Colors.green : Colors.blueAccent,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        ),
+                                        if (isSelected)
+                                          Positioned(
+                                            bottom: 0,
+                                            left: 0,
+                                            child: Icon(
+                                              Icons.check_circle,
+                                              size: 20,
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                  ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      crew.name,
+                                      style: TextStyle(color: Colors.blueAccent),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
-                                if (isSelected)
-                                  Positioned(
-                                    bottom: 0,
-                                    left: 0,
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      size: 20,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            SizedBox(height: 4), // Spazio tra cerchietto e nome
-                            Text(
-                              crew.name,
-                              style: TextStyle(color: Colors.blueAccent),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                              );
+                            },
+                          )
+                    : SizedBox.shrink(),
+              ),
+              SizedBox(height: 20),
+              // Pulsante per Top 5 Crew della Provincia
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
+                  elevation: 5,
                 ),
-              );
-            },
-          ),
-        ],
-      ],
-      SizedBox(height: 20),
-      // Pulsante per Top 5 Crew della Provincia
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent, // Colore di sfondo
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 5,
-          ),
-          onPressed: () => _showBottomSheet('Top 5 Crew della Provincia', _provinceTopCrewsFuture),
-          child: Text(
-            'Top 5 Crew della Provincia',
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ),
-      ),
-      SizedBox(height: 20),
-      // Pulsante per Top 5 Crew della Nazione
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent, // Colore di sfondo
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 5,
-          ),
-          onPressed: () => _showBottomSheet('Top 5 Crew della Nazione', _nationTopCrewsFuture),
-          child: Text(
-            'Top 5 Crew della Nazione',
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ),
-      ),
-    ],
-  ),
-)
+                onPressed: () => _showBottomSheet('Top 5 Crew della Provincia', _provinceTopCrewsFuture),
+                child: Text(
+                  'Top 5 Crew della Provincia',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Pulsante per Top 5 Crew della Nazione
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  elevation: 5,
+                ),
+                onPressed: () => _showBottomSheet('Top 5 Crew della Nazione', _nationTopCrewsFuture),
+                child: Text(
+                  'Top 5 Crew della Nazione',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Pulsante per il passo successivo
+              ElevatedButton(
+                onPressed: () {
+                  final userProfile = Provider.of<UserProfile>(context, listen: false);
+                  userProfile.updateWorldCrews(crews: _selectedCrews.toList());
+                  if(userProfile.isAthlete || userProfile.isBoth){
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileWorldFederationPage(testMode: true),
+                    ),
+                  );
+                  }else{
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileWorldAthletePage(testMode: true),
+                    ),
+                  );
 
-
-          ],
+                  }
+                  
+                },
+                child: Text(
+                  'Next Step',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).mainColor,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 5,
+                  shadowColor: Colors.black45,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -22,7 +22,9 @@ class UserProfile with ChangeNotifier {
   DateTime dipsDate = DateTime.now();
 
   String level = 'Base';
-  String crew = '';
+  List<String> crews = [];
+  List<String> coaches = [];
+  List<String> athletes = [];
   String preparatore = '';
   String federation = '';
   bool isBoth = false;
@@ -82,9 +84,6 @@ void updateCoachProfile({
     required DateTime dlDate,
     required double dips,
     required String level,
-    required String crew,
-    required String preparatore,
-    required String federation,
     required bool isAthlete,
   }) {
     this.category = category;
@@ -99,12 +98,36 @@ void updateCoachProfile({
     this.dlDate = dlDate;
     this.dips = dips;
     this.level = level;
-    this.crew = crew;
-    this.preparatore = preparatore;
-    this.federation = federation;
     this.isAthlete = isAthlete;
     notifyListeners();
   }
+
+    void updateWorldCrews({
+    required List<String> crews
+  }) {
+    this.crews = crews;
+    notifyListeners();
+  }
+  
+    void updateWorldFederation({
+    required String federation
+  }) {
+    this.federation = federation;
+    notifyListeners();
+  }
+    void updateWorldCoaches({
+    required List<String> coaches
+  }) {
+    this.coaches = coaches;
+    notifyListeners();
+  }
+    void updateWorldAthletes({
+    required List<String> athletes
+  }) {
+    this.athletes = athletes;
+    notifyListeners();
+  }
+
 
   void reset() {
     firstName = '';
@@ -113,10 +136,11 @@ void updateCoachProfile({
     email = '';
     username = '';
     password = '';
-    category = 'Standard';
+    category = '';
     isMale = true;
     weightClass = '53';
     isAlsoPrep = false;
+    isAthlete = false;
     squat = 0;
     squatDate = DateTime.now();
     benchPress = 0;
@@ -125,7 +149,7 @@ void updateCoachProfile({
     dlDate = DateTime.now();
     dips = 0;
     level = 'Base';
-    crew = '';
+    crews = [];
     preparatore = '';
     federation = '';
     notifyListeners();

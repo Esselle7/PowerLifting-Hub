@@ -1,43 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
-import 'package:gym/SignUp/General/profile_world_coach_page.dart';
-import 'package:gym/SignUp/General/profile_world_federation_page.dart';
+import 'package:gym/Home/home_page.dart';
+import 'package:gym/Services/network_services.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
 
-// Modello per i dati delle federazioni
-class Federation {
+// Modello per i dati dei coach
+class Coach {
   final String name;
   final String province;
   final String nation;
 
-  Federation({required this.name, required this.province, required this.nation});
+  Coach({required this.name, required this.province, required this.nation});
 }
 
-// Lista di test per i top 5 federazioni della provincia e della nazione
-final List<Federation> provinceTopFederations = [
-  Federation(name: 'Federation A', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation B', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation C', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation D', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation E', province: 'Provincia', nation: 'Nazione'),
+// Lista di test per i top 5 coach della provincia e della nazione
+final List<Coach> provinceTopCoaches = [
+  Coach(name: 'Coach A', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach B', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach C', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach D', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach E', province: 'Provincia', nation: 'Nazione'),
 ];
 
-final List<Federation> nationTopFederations = [
-  Federation(name: 'Federation X', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation Y', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation Z', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation W', province: 'Provincia', nation: 'Nazione'),
-  Federation(name: 'Federation V', province: 'Provincia', nation: 'Nazione'),
+final List<Coach> nationTopCoaches = [
+  Coach(name: 'Coach X', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach Y', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach Z', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach W', province: 'Provincia', nation: 'Nazione'),
+  Coach(name: 'Coach V', province: 'Provincia', nation: 'Nazione'),
 ];
 
-// Simula la chiamata API per ottenere i top 5 federazioni
-Future<List<Federation>> fetchTopFederations(String type, {required bool testMode}) async {
+// Simula la chiamata API per ottenere i top 5 coach
+Future<List<Coach>> fetchTopCoaches(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
-      return Future.delayed(Duration(seconds: 1), () => provinceTopFederations);
+      return Future.delayed(Duration(seconds: 1), () => provinceTopCoaches);
     } else if (type == 'nation') {
-      return Future.delayed(Duration(seconds: 1), () => nationTopFederations);
+      return Future.delayed(Duration(seconds: 1), () => nationTopCoaches);
     }
   } else {
     // Inserisci la logica della chiamata API per ottenere i dati reali
@@ -46,13 +47,13 @@ Future<List<Federation>> fetchTopFederations(String type, {required bool testMod
   return [];
 }
 
-// Simula la chiamata API per ottenere le federazioni
-Future<List<Federation>> fetchFederations({required bool testMode}) async {
+// Simula la chiamata API per ottenere i coach
+Future<List<Coach>> fetchCoaches({required bool testMode}) async {
   if (testMode) {
-    // Lista di federazioni di test
+    // Lista di coach di test
     return List.generate(
       30,
-      (index) => Federation(name: 'TestFederation $index', province: 'Provincia', nation: 'Nazione'),
+      (index) => Coach(name: 'TestCoach $index', province: 'Provincia', nation: 'Nazione'),
     );
   } else {
     // Inserisci la logica della chiamata API per ottenere i dati reali
@@ -60,56 +61,79 @@ Future<List<Federation>> fetchFederations({required bool testMode}) async {
   }
 }
 
-class ProfileWorldFederationPage extends StatefulWidget {
-  final bool testMode;
+// Modello per i dati delle persone
+class Person {
+  final String name;
+  final Color color;
 
-  ProfileWorldFederationPage({required this.testMode});
-
-  @override
-  _ProfileWorldFederationPageState createState() => _ProfileWorldFederationPageState();
+  Person({required this.name, required this.color});
 }
 
-class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage> {
+// Esempio di dati per i cerchietti
+final List<Person> persons = List.generate(
+  30,
+  (index) => Person(
+    name: 'Nome $index',
+    color: Colors.primaries[index % Colors.primaries.length],
+  ),
+);
+
+class ProfileWorldCoachPage extends StatefulWidget {
+  final bool testMode;
+
+  ProfileWorldCoachPage({required this.testMode});
+
+  @override
+  _ProfileWorldCoachPageState createState() => _ProfileWorldCoachPageState();
+}
+
+class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
   final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
 
-  late Future<List<Federation>> _provinceTopFederationsFuture;
-  late Future<List<Federation>> _nationTopFederationsFuture;
+  late Future<List<Coach>> _provinceTopCoachesFuture;
+  late Future<List<Coach>> _nationTopCoachesFuture;
 
-  Federation? _selectedFederation; // Stato per tenere traccia della federazione selezionata
-  List<Federation> _filteredFederations = []; // Lista delle federazioni filtrate in base alla ricerca
+  Set<String> _selectedCoaches = {}; // Stato per tenere traccia dei coach selezionati
+  List<Coach> _filteredCoaches = []; // Lista dei coach filtrati in base alla ricerca
   String _searchQuery = '';
+  final NetworkService networkService = NetworkService();
 
   @override
   void initState() {
     super.initState();
-    _provinceTopFederationsFuture = fetchTopFederations('province', testMode: widget.testMode);
-    _nationTopFederationsFuture = fetchTopFederations('nation', testMode: widget.testMode);
-    _fetchFederations(); // Ottiene le federazioni iniziali
+    _provinceTopCoachesFuture = fetchTopCoaches('province', testMode: widget.testMode);
+    _nationTopCoachesFuture = fetchTopCoaches('nation', testMode: widget.testMode);
+    _fetchCoaches(); // Ottiene i coach iniziali
   }
 
-  Future<void> _fetchFederations() async {
-    final federations = await fetchFederations(testMode: widget.testMode);
+  Future<void> _fetchCoaches() async {
+    final coaches = await fetchCoaches(testMode: widget.testMode);
     setState(() {
-      _filteredFederations = federations;
+      _filteredCoaches = coaches;
     });
   }
 
   void _updateSearchQuery(String query) {
     setState(() {
       _searchQuery = query;
-      _filteredFederations = _filteredFederations
-          .where((federation) => federation.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
+      _filteredCoaches = persons
+          .where((person) => person.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
+          .map((person) => Coach(name: person.name, province: '', nation: ''))
           .toList();
     });
   }
 
-  void _selectFederation(Federation federation) {
+  void _toggleSelection(String coachName) {
     setState(() {
-      _selectedFederation = federation;
+      if (_selectedCoaches.contains(coachName)) {
+        _selectedCoaches.remove(coachName);
+      } else {
+        _selectedCoaches.add(coachName);
+      }
     });
   }
 
-  void _showBottomSheet(String title, Future<List<Federation>> federationFuture) {
+  void _showBottomSheet(String title, Future<List<Coach>> coachFuture) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -139,8 +163,8 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                     ),
                     SizedBox(height: 10),
                     Expanded(
-                      child: FutureBuilder<List<Federation>>(
-                        future: federationFuture,
+                      child: FutureBuilder<List<Coach>>(
+                        future: coachFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return Center(child: CircularProgressIndicator());
@@ -153,17 +177,15 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                               controller: scrollController,
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
-                                final federation = snapshot.data![index];
-                                final isSelected = _selectedFederation == federation;
+                                final coach = snapshot.data![index];
                                 return ListTile(
                                   contentPadding: EdgeInsets.symmetric(vertical: 10.0),
                                   leading: CircleAvatar(
-                                    backgroundColor: isSelected ? Colors.green : Colors.blue, // Colore fittizio per i cerchietti delle federazioni
-                                    child: Text(federation.name[0], style: TextStyle(color: Colors.blueAccent)),
+                                    backgroundColor: Colors.blue, // Colore fittizio per i cerchietti dei coach
+                                    child: Text(coach.name[0], style: TextStyle(color: Colors.blueAccent)),
                                   ),
-                                  title: Text(federation.name, style: TextStyle(color: Colors.blueAccent)),
-                                  subtitle: Text('${federation.province}, ${federation.nation}', style: TextStyle(color: Colors.blueAccent)),
-                                  onTap: () => _selectFederation(federation),
+                                  title: Text(coach.name, style: TextStyle(color: Colors.blueAccent)),
+                                  subtitle: Text('${coach.province}, ${coach.nation}', style: TextStyle(color: Colors.blueAccent)),
                                 );
                               },
                             );
@@ -191,7 +213,7 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Cerca Federazione'),
+          title: Text('Cerca Coach'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -202,20 +224,20 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                 focusNode: _focusNode,
                 onChanged: _updateSearchQuery,
                 decoration: InputDecoration(
-                  labelText: 'Digita il nome della tua federazione',
+                  labelText: 'Digita il nome del tuo coach',
                   labelStyle: TextStyle(color: Colors.blueAccent),
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
                 ),
               ),
               SizedBox(height: 16.0),
-              // Sezione per le federazioni filtrate
+              // Sezione per i coach filtrati
               Expanded(
                 child: _searchQuery.isNotEmpty
-                    ? _filteredFederations.isEmpty
+                    ? _filteredCoaches.isEmpty
                         ? Center(
                             child: Text(
-                              'Nessuna federazione trovata',
+                              'Nessun coach trovato',
                               style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                             ),
                           )
@@ -226,12 +248,12 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                               mainAxisSpacing: 10,
                               childAspectRatio: 1,
                             ),
-                            itemCount: _filteredFederations.length > 16 ? 16 : _filteredFederations.length,
+                            itemCount: _filteredCoaches.length > 16 ? 16 : _filteredCoaches.length,
                             itemBuilder: (context, index) {
-                              final federation = _filteredFederations[index];
-                              final isSelected = _selectedFederation == federation;
+                              final coach = _filteredCoaches[index];
+                              final isSelected = _selectedCoaches.contains(coach.name);
                               return GestureDetector(
-                                onTap: () => _selectFederation(federation),
+                                onTap: () => _toggleSelection(coach.name),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -264,7 +286,7 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                                     ),
                                     SizedBox(height: 4),
                                     Text(
-                                      federation.name,
+                                      coach.name,
                                       style: TextStyle(color: Colors.blueAccent),
                                       textAlign: TextAlign.center,
                                     ),
@@ -276,7 +298,7 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                     : SizedBox.shrink(),
               ),
               SizedBox(height: 20),
-              // Pulsante per Top 5 Federazioni della Provincia
+              // Pulsante per Top 5 Coach della Provincia
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -286,14 +308,14 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                   ),
                   elevation: 5,
                 ),
-                onPressed: () => _showBottomSheet('Top 5 Federazioni della Provincia', _provinceTopFederationsFuture),
+                onPressed: () => _showBottomSheet('Top 5 Coach della Provincia', _provinceTopCoachesFuture),
                 child: Text(
-                  'Top 5 Federazioni della Provincia',
+                  'Top 5 Coach della Provincia',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
               SizedBox(height: 20),
-              // Pulsante per Top 5 Federazioni della Nazione
+              // Pulsante per Top 5 Coach della Nazione
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -303,9 +325,9 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
                   ),
                   elevation: 5,
                 ),
-                onPressed: () => _showBottomSheet('Top 5 Federazioni della Nazione', _nationTopFederationsFuture),
+                onPressed: () => _showBottomSheet('Top 5 Coach della Nazione', _nationTopCoachesFuture),
                 child: Text(
-                  'Top 5 Federazioni della Nazione',
+                  'Top 5 Coach della Nazione',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
@@ -314,27 +336,107 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
               ElevatedButton(
                 onPressed: () {
                   final userProfile = Provider.of<UserProfile>(context, listen: false);
-                  userProfile.updateWorldFederation(federation: _selectedFederation?.name ?? "");
+                  userProfile.updateWorldCoaches(coaches: _selectedCoaches.toList());
+                  Map<String, dynamic> profile;
                   if(userProfile.isBoth){
-                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileWorldAthletePage(testMode: true),
-                    ),
-                  );
+                    profile = {
+        'utente': {
+          'nome': userProfile.firstName,
+          'cognome': userProfile.lastName,
+          'username': userProfile.username,
+          'dob': userProfile.dob.toIso8601String(),
+          'password': userProfile.password,
+          'mail': userProfile.email,
+          'sesso': userProfile.isMale,
+          'crews': userProfile.crews,
+        },
+        'atleta': {
+          'federazione': userProfile.federation,
+          'tipologia': userProfile.category,
+          //'tipologia': "POWERLIFTER",
+          
+          'trainer': userProfile.coaches,
+          'weightClass': userProfile.weightClass,
+        },
+        'massimali': [
+          {
+            'alzata': "SQUAT",
+            'data': userProfile.squatDate.toIso8601String(),
+            'peso': userProfile.squat,
+          },
+          {
+            'alzata': "PANCA_PIANA",
+            'data': userProfile.bpDate.toIso8601String(),
+            'peso': userProfile.benchPress,
+          },
+          {
+            'alzata': "STACCO_DA_TERRA",
+            'data': userProfile.dlDate.toIso8601String(),
+            'peso': userProfile.deadlift,
+          }
+          //elimina dips
+        ]
+      };
                   }
                   else{
-                     Navigator.push(
+                     profile = {
+        'utente': {
+          'nome': userProfile.firstName,
+          'cognome': userProfile.lastName,
+          'username': userProfile.username,
+          'dob': userProfile.dob.toIso8601String(),
+          'password': userProfile.password,
+          'mail': userProfile.email,
+          'sesso': userProfile.isMale,
+          'crews': userProfile.crews,
+        },
+        'atleta': {
+          'federazione': userProfile.federation,
+          'tipologia': userProfile.category, // fixme
+          //'tipologia': "POWERLIFTER",
+          
+          'trainers': userProfile.coaches,
+          'weightClass': userProfile.weightClass,
+        },
+        'trainer': {
+          'skillSpecifiche': userProfile.coachSkills,
+          'titoli': userProfile.educationTitle,
+          'atleti': userProfile.athletes,
+        },
+        'massimali': [
+          {
+            'alzata': "SQUAT",
+            'data': userProfile.squatDate.toIso8601String(),
+            'peso': userProfile.squat,
+          },
+          {
+            'alzata': "PANCA_PIANA",
+            'data': userProfile.bpDate.toIso8601String(),
+            'peso': userProfile.benchPress,
+          },
+          {
+            'alzata': "STACCO_DA_TERRA",
+            'data': userProfile.dlDate.toIso8601String(),
+            'peso': userProfile.deadlift,
+          }
+          //elimina dips
+        ]
+      };
+                  }
+                  String profileJson = jsonEncode(profile);
+                    print(profileJson);
+                    if(!widget.testMode){
+                      networkService.sendData(profile);
+                    }
+                    Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileWorldCoachPage(testMode: true),
+                      builder: (context) => HomePage(),
                     ),
                   );
-                  }
-                   
                 },
                 child: Text(
-                  'Next Step',
+                  'Save',
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
