@@ -400,7 +400,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
         },
         'trainer': {
           'skillSpecifiche': userProfile.coachSkills,
-          'titoli': userProfile.educationTitle,
+          'titoli': userProfile.educationTitles,
           'atleti': userProfile.athletes,
         },
         'massimali': [

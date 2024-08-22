@@ -25,5 +25,31 @@ class NetworkService {
     }
   }
 
-  // Aggiungi altre funzioni di rete qui se necessario
+   Future<bool> sendDataLogin(Map<String, dynamic> json) async {
+    final url = Uri.parse('http://192.168.1.17:8080/gym/login');
+
+    String jsonString = jsonEncode(json);
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonString,
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.contains('non autorizzato')) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        throw Exception('Failed to send data: ${response.statusCode} ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 }

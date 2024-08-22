@@ -5,13 +5,15 @@ final ThemeData lightTheme = ThemeData.light().copyWith(
   scaffoldBackgroundColor:  Colors.white,
   mainColor: Colors.blueAccent,
   appBarTheme: AppBarTheme(
-    backgroundColor:  Colors.white,
-    foregroundColor:  Colors.blueAccent,
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.blueAccent,
     titleTextStyle: TextStyle(
-    fontWeight: FontWeight.bold, // Imposta il testo in grassetto
-    color: Colors.blueAccent, // Colore del testo, se necessario
-    fontSize: 25, // Dimensione del testo, se necessario
+      fontWeight: FontWeight.bold, // Imposta il testo in grassetto
+      color: Colors.blueAccent, // Colore del testo
+      fontSize: 25, // Dimensione del testo
     ),
+    elevation: 0, // Imposta l'elevazione a 0 per evitare ombre aggiuntive
+    toolbarHeight: kToolbarHeight,
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(

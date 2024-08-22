@@ -364,7 +364,7 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
         },
         'trainer': {
           'skillSpecifiche': userProfile.coachSkills,
-          'titoli': userProfile.educationTitle,
+          'titoli': userProfile.educationTitles,
           'atleti': userProfile.athletes, 
         },
         'massimali': [

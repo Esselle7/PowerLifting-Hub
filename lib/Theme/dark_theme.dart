@@ -4,7 +4,7 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
   primaryColor:  Colors.black, // Colore principale della tua app
   scaffoldBackgroundColor:  Colors.black, // Colore di sfondo della Scaffold
   mainColor: Colors.blueAccent,
-  appBarTheme: AppBarTheme(
+  /*appBarTheme: AppBarTheme(
     backgroundColor:  Colors.black,
     foregroundColor:  Colors.blueAccent,
     titleTextStyle: TextStyle(
@@ -12,7 +12,7 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
     color: Colors.blueAccent, // Colore del testo, se necessario
     fontSize: 25, // Dimensione del testo, se necessario
     ),
-  ),
+  ),*/
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Colors.blueAccent,

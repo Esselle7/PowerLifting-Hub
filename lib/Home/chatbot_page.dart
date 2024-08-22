@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gym/Services/homeAppBar.dart';
 import 'package:http/http.dart' as http;
 
 class ChatbotPage extends StatefulWidget {
@@ -56,9 +57,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Chatbot'),
-      ),
+      appBar:  HomeAppBar(title: "Chatbot"),
       body: Column(
         children: [
           Expanded(

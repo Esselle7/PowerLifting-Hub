@@ -30,7 +30,7 @@ class UserProfile with ChangeNotifier {
   bool isBoth = false;
   bool isAthlete = false;
   
-  String educationTitle = '';
+  List<String> educationTitles = [];
   Map<String, int> coachSkills = {};
 
   void updatePersonalInfo({
@@ -56,11 +56,11 @@ void updateIsBoth({required bool isBoth,}){
 }
 void updateCoachProfile({
     required bool isMale,
-    required String educationTitle,
+    required List<String> educationTitles,
     required bool isAlsoPrep,
   }) {
     this.isMale = isMale;
-    this.educationTitle = educationTitle;
+    this.educationTitles = educationTitles;
     this.isAlsoPrep = isAlsoPrep;
     notifyListeners();
   }
@@ -145,6 +145,7 @@ void updateCoachProfile({
     squatDate = DateTime.now();
     benchPress = 0;
     bpDate = DateTime.now();
+    educationTitles = [];
     deadlift = 0;
     dlDate = DateTime.now();
     dips = 0;

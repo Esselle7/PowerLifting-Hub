@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     CrewPage(),
     SearchPage(),
     ChatbotPage(),
-    ProfilePage(),
+    ProfilePage(testMode: true),
     ChatPage(),
   ];
 
@@ -52,9 +52,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
-        backgroundColor:  Theme.of(context).primaryColor,
+        backgroundColor: Colors.transparent, // Imposta il colore di sfondo
         onTap: _onItemTapped,
       ),
     );

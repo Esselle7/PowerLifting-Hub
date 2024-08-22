@@ -211,7 +211,7 @@ class _ProfileWorldPageState extends State<ProfileWorldPage> {
         },
         'trainer': {
           'skillSpecifiche': userProfile.coachSkills,
-          'titoli': userProfile.educationTitle,
+          'titoli': userProfile.educationTitles,
           //'atleti': da inserire
         },
         'massimali': [
@@ -248,7 +248,7 @@ class _ProfileWorldPageState extends State<ProfileWorldPage> {
         },
         'trainer': {
           'skillSpecifiche': userProfile.coachSkills,
-          'titoli': userProfile.educationTitle,
+          'titoli': userProfile.educationTitles,
           //'atleti': da inserire
         },
         'massimali': [

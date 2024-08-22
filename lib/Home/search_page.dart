@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Services/homeAppBar.dart';
 
 class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Search'),
-      ),
+      appBar:  HomeAppBar(title: "Search"),
       body: Center(
         child: Text(
           'Search Page',
