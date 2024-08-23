@@ -1,0 +1,111 @@
+/* Stile di base per il corpo del documento */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1F1F1F;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    line-height: 1.6;
+}
+
+/* Contenitore principale del bot */
+.bot-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #2A2A2A;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Stile del titolo del bot */
+.bot-header {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #E91E63;
+}
+
+/* Stile per i messaggi del bot */
+.bot-message {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Stile per i messaggi dell'utente */
+.bot-user-message {
+    background-color: #E91E63;
+    color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: right;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Stile per l'input dell'utente */
+.bot-input-container {
+    display: flex;
+    margin-top: 20px;
+}
+
+.bot-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #444;
+    color: #fff;
+    margin-right: 10px;
+}
+
+.bot-send-button {
+    padding: 10px 20px;
+    background-color: #E91E63;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bot-send-button:hover {
+    background-color: #d81b60;
+}
+
+/* Stile per i link */
+.bot-message a {
+    color: #E91E63;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.bot-message a:hover {
+    text-decoration: underline;
+}
+
+/* Animazione di comparsa dei messaggi */
+.bot-message, .bot-user-message {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
