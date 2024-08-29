@@ -211,6 +211,8 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Cerca Persone'),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

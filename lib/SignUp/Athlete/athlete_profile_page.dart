@@ -199,6 +199,8 @@ void initState() {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Crea Profilo Atleta'),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
           leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () async {

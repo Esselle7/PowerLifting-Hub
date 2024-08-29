@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym/Home/ProfileActions/edit_personal_info_page.dart';
 import 'package:gym/Services/homeAppBar.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatefulWidget {
@@ -37,9 +38,9 @@ class _ProfilePageState extends State<ProfilePage> {
           {"esercizio": "Stacchi da terra", "serie": 4, "rep": 8, "note": "Mantieni la schiena dritta"},
           {"esercizio": "Trazioni", "serie": 3, "rep": 12, "note": "Esegui lentamente"}
         ],
-        "nome": "Mario",
-        "cognome": "Rossi",
-        "citta": "Roma",
+        "nome": "Simone",
+        "cognome": "Rovetti",
+        "citta": "Como",
         "followers": 120,
         "following": 150
       };
@@ -102,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       children: [
                                         Text(
                                           '${data['nome']} ${data['cognome']}',
-                                          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                                          style: TextStyle(color: Theme.of(context).oppositeColor, fontSize: 22, fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(width: 10),
                                         ElevatedButton(
@@ -144,11 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                           children: [
                                             Text(
                                               '${data['followers']}',
-                                              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                              style: ResponsiveTextStyles.labelMedium(context),
                                             ),
                                             Text(
                                               'Followers',
-                                              style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                                              style: ResponsiveTextStyles.labelSmall(context),
                                             ),
                                           ],
                                         ),
@@ -157,11 +158,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                           children: [
                                             Text(
                                               '${data['following']}',
-                                              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                               style: ResponsiveTextStyles.labelMedium(context),
                                             ),
                                             Text(
                                               'Following',
-                                              style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                                              style: ResponsiveTextStyles.labelSmall(context),
                                             ),
                                           ],
                                         ),
@@ -179,7 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 SizedBox(height: 4),
                                                 Text(
                                                   badge.replaceAll('BADGE_', ''),
-                                                  style: TextStyle(color: Colors.white),
+                                                   style: ResponsiveTextStyles.labelMedium(context),
                                                 ),
                                               ],
                                             );
@@ -210,7 +211,7 @@ Container(
   width: MediaQuery.of(context).size.width / 2, // Larghezza metà pagina
   padding: EdgeInsets.all(8.0),
   decoration: BoxDecoration(
-    color: Colors.grey[800],
+    color: Colors.transparent,
     borderRadius: BorderRadius.circular(12),
     border: Border.all(color: Colors.blueAccent, width: 2),
   ),
@@ -225,18 +226,18 @@ Container(
             children: [
               Text(
                 '${item['alzata']}',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: ResponsiveTextStyles.labelMedium(context),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '${item['data']}',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                     style: ResponsiveTextStyles.labelSmall(context),
                   ),
                   Text(
                     '${item['peso']} kg',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: ResponsiveTextStyles.labelLarge(context),
                   ),
                 ],
               ),
@@ -282,7 +283,7 @@ Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[900],
+                            color: Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.blueAccent, width: 2),
                           ),
@@ -292,7 +293,7 @@ Container(
                             children: [
                               Text(
                                 'Esercizio ${data['wod'].indexOf(item) + 1}',
-                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                 style: ResponsiveTextStyles.labelLarge(context),
                               ),
                               SizedBox(height: 10),
                               Row(
@@ -300,19 +301,19 @@ Container(
                                   Expanded(
                                     child: Text(
                                       '${item['esercizio']}',
-                                      style: TextStyle(color: Colors.white, fontSize: 16),
+                                      style: ResponsiveTextStyles.labelMedium(context),
                                     ),
                                   ),
                                   Text(
                                     '${item['serie']} serie | ${item['rep']} rep',
-                                    style: TextStyle(color: Colors.grey[400]),
+                                     style: ResponsiveTextStyles.labelSmall(context),
                                   ),
                                 ],
                               ),
                               SizedBox(height: 10),
                               Text(
                                 'Note: ${item['note']}',
-                                style: TextStyle(color: Colors.grey[400]),
+                                style: ResponsiveTextStyles.labelSmall(context),
                               ),
                             ],
                           ),

@@ -214,6 +214,8 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Cerca Coach'),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -426,7 +428,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                   String profileJson = jsonEncode(profile);
                     print(profileJson);
                     if(!widget.testMode){
-                      networkService.sendData(profile);
+                      networkService.sendData(profile, "registrazione");
                     }
                     Navigator.push(
                     context,

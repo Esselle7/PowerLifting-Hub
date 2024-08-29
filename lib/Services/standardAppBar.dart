@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title; // Aggiungi un campo per il titolo
+class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title; // Campo per il titolo
 
-  HomeAppBar({required this.title}); // Costruttore che accetta il titolo
+  StandardAppBar({
+    required this.title, // Costruttore che accetta il titolo
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         AppBar(
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Colors.blueAccent,
-          automaticallyImplyLeading: false,
           title: Text(
             title, // Usa il titolo passato come parametro
             style: TextStyle(
@@ -22,6 +23,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           elevation: 0, // Rimuove l'ombra
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop(); // Torna indietro alla schermata precedente
+            },
+          ),
         ),
         Container(
           color: const Color.fromARGB(255, 60, 60, 60), // Colore della linea di demarcazione

@@ -216,6 +216,8 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Cerca Atleti'),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -389,7 +391,7 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                     String profileJson = jsonEncode(profile);
                     print(profileJson);
                     if(!widget.testMode){
-                      networkService.sendData(profile);
+                      networkService.sendData(profile, "registrazione");
                     }
                     Navigator.push(
                     context,

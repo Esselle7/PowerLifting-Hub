@@ -207,6 +207,8 @@ Widget _buildSccelectionButton(String type) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Crea Profilo Coach'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () async {

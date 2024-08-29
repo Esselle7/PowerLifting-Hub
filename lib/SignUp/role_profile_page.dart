@@ -7,7 +7,9 @@ class RolePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tell me about you')
+        title: Text('Tell me about you'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
       ),
       body: Container(
         width: double.infinity,

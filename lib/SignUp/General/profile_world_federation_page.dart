@@ -192,6 +192,8 @@ class _ProfileWorldFederationPageState extends State<ProfileWorldFederationPage>
       child: Scaffold(
         appBar: AppBar(
           title: Text('Cerca Federazione'),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

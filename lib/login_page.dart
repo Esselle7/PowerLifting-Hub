@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                         'username': email,
                         'password': password,
                       };
-                      if(await networkService.sendDataLogin(json)){
+                      if(await networkService.sendData(json, "login")){
                         setState(() {
                             _emailError = true;
                             _passwordError = true;

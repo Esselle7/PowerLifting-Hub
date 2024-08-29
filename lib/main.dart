@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:gym/Home/home_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:gym/Theme/dark_theme.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:gym/wellcome_page.dart';
 
 void main() {
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserProfile(),

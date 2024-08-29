@@ -83,6 +83,8 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sign Up'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
       ),
       body: GestureDetector(
         onTap: () {

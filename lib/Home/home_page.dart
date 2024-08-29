@@ -15,8 +15,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _pages = <Widget>[
     CrewPage(),
     SearchPage(),
-    //ChatbotPage(),
-    WebViewScreen(),
+    ChatbotPage(),
     ProfilePage(testMode: true),
     ChatPage(),
   ];

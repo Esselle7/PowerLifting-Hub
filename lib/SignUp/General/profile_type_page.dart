@@ -7,6 +7,8 @@ class ProfileType extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
       ),
       body: Center(
         child: Column(

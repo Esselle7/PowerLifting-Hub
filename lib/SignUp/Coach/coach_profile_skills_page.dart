@@ -61,6 +61,8 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Insert yout Skills'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

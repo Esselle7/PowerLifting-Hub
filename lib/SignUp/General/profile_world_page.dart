@@ -330,6 +330,8 @@ class _ProfileWorldPageState extends State<ProfileWorldPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Informazioni Aggiuntive', style: TextStyle(fontWeight: FontWeight.bold)),
+          backgroundColor: Colors.transparent,
+        foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
