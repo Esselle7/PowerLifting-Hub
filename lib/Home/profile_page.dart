@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:gym/Home/ProfileActions/edit_personal_info_page.dart';
+import 'package:gym/Home/ProfileActions/workout_page.dart';
 import 'package:gym/Services/homeAppBar.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool testMode;
@@ -27,11 +31,19 @@ class _ProfilePageState extends State<ProfilePage> {
     if (widget.testMode) {
       return {
         "avatar": "avatar_w_pl",
-        "badge": ["BADGE_ORO"],
         "storico": [
-          {"alzata": "SQUAT", "data": "2023-10-10", "peso": 150.5},
+          {"alzata": "SQUAT", "data": "2023-10-01", "peso": 150.5},
+          {"alzata": "SQUAT", "data": "2023-09-25", "peso": 145.0},
+          {"alzata": "SQUAT", "data": "2023-09-20", "peso": 140.0},
+          {"alzata": "SQUAT", "data": "2023-09-15", "peso": 137.5},
+          {"alzata": "SQUAT", "data": "2023-09-10", "peso": 135.0},
           {"alzata": "PANCA_PIANA", "data": "2023-10-11", "peso": 100.0},
+          {"alzata": "PANCA_PIANA", "data": "2023-09-26", "peso": 98.0},
+          {"alzata": "PANCA_PIANA", "data": "2023-09-16", "peso": 97.0},
+          {"alzata": "PANCA_PIANA", "data": "2023-09-01", "peso": 95.0},
           {"alzata": "STACCO_DA_TERRA", "data": "2023-10-12", "peso": 180.0},
+          {"alzata": "STACCO_DA_TERRA", "data": "2023-09-22", "peso": 175.0},
+          {"alzata": "STACCO_DA_TERRA", "data": "2023-09-12", "peso": 170.0},
         ],
         "wod": [
           {"esercizio": "Spinte con manubri", "serie": 4, "rep": 10, "note": "Discesa lenta"},
@@ -40,9 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
         "nome": "Simone",
         "cognome": "Rovetti",
-        "citta": "Como",
-        "followers": 120,
-        "following": 150
+        "citta": "Como, Italy",
+        "badge": ["BADGE_ORO"],
       };
     } else {
       final url = Uri.parse('http://your-api-url/profile');
@@ -60,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      appBar:  HomeAppBar(title: "Profilo"),
+      appBar: HomeAppBar(title: "Profilo"),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _profileData,
         builder: (context, snapshot) {
@@ -73,8 +84,19 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           final data = snapshot.data!;
+          final storicos = data['storico'] as List<dynamic>;
+
+          final eserciziMap = <String, List<Map<String, dynamic>>>{};
+          for (var item in storicos) {
+            final alzata = item['alzata'];
+            if (!eserciziMap.containsKey(alzata)) {
+              eserciziMap[alzata] = [];
+            }
+            eserciziMap[alzata]!.add(item);
+          }
+
           return SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(12.0), // Ridotto il padding
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,10 +113,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CircleAvatar(
-                                radius: 60,
+                                radius: MediaQuery.of(context).size.width * 0.12, // Ridotto il raggio
                                 backgroundImage: AssetImage('assets/${data['avatar']}.jpeg'),
                               ),
-                              SizedBox(width: 10),
+                              SizedBox(width: MediaQuery.of(context).size.width * 0.02), // Spazio proporzionale
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,31 +125,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                       children: [
                                         Text(
                                           '${data['nome']} ${data['cognome']}',
-                                          style: TextStyle(color: Theme.of(context).oppositeColor, fontSize: 22, fontWeight: FontWeight.bold),
+                                          style: ResponsiveTextStyles.labelMedium(context),
                                         ),
-                                        SizedBox(width: 10),
+                                        SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                                         ElevatedButton(
                                           onPressed: () {
                                             Navigator.push(
-                                            context,
-                                           MaterialPageRoute(
-                                                    builder: (context) => EditProfilePage(testMode: true,),
-                                                    ),
-                                              );
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditProfilePage(testMode: true),
+                                              ),
+                                            );
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.transparent,
                                             foregroundColor: Colors.blueAccent,
-                                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: MediaQuery.of(context).size.width * 0.015,
+                                              vertical: MediaQuery.of(context).size.height * 0.01,
+                                            ),
                                             side: BorderSide(color: Colors.blueAccent),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius: BorderRadius.circular(8),
                                             ),
                                           ),
                                           child: Row(
                                             children: [
                                               Icon(Icons.edit, color: Colors.blueAccent),
-                                              SizedBox(width: 4),
+                                              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                                               Text('Edit'),
                                             ],
                                           ),
@@ -136,57 +161,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     Text(
                                       '${data['citta']}',
-                                      style: TextStyle(color: Colors.grey[400], fontSize: 18),
+                                      style: ResponsiveTextStyles.labelSmall(context),
                                     ),
-                                    SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Column(
+                                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                                    Wrap(
+                                      spacing: MediaQuery.of(context).size.width * 0.02,
+                                      children: data['badge'].map<Widget>((badge) {
+                                        return Column(
                                           children: [
+                                            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
                                             Text(
-                                              '${data['followers']}',
+                                              badge.replaceAll('BADGE_', ''),
                                               style: ResponsiveTextStyles.labelMedium(context),
                                             ),
-                                            Text(
-                                              'Followers',
-                                              style: ResponsiveTextStyles.labelSmall(context),
-                                            ),
                                           ],
-                                        ),
-                                        SizedBox(width: 20),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              '${data['following']}',
-                                               style: ResponsiveTextStyles.labelMedium(context),
-                                            ),
-                                            Text(
-                                              'Following',
-                                              style: ResponsiveTextStyles.labelSmall(context),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Wrap(
-                                          spacing: 10,
-                                          children: data['badge'].map<Widget>((badge) {
-                                            return Column(
-                                              children: [
-                                                //Image.asset('assets/${badge}.png', width: 40, height: 40),
-                                                SizedBox(height: 4),
-                                                Text(
-                                                  badge.replaceAll('BADGE_', ''),
-                                                   style: ResponsiveTextStyles.labelMedium(context),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ],
+                                        );
+                                      }).toList(),
                                     ),
                                   ],
                                 ),
@@ -198,56 +188,154 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-                                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
                 // Storico
                 Text(
                   'Storico',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                  style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
                 ),
-                SizedBox(height: 10),
-                // Modifica della riga per lo storico
-Container(
-  width: MediaQuery.of(context).size.width / 2, // Larghezza metà pagina
-  padding: EdgeInsets.all(8.0),
-  decoration: BoxDecoration(
-    color: Colors.transparent,
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: Colors.blueAccent, width: 2),
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      ...data['storico'].map<Widget>((item) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${item['alzata']}',
-                style: ResponsiveTextStyles.labelMedium(context),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${item['data']}',
-                     style: ResponsiveTextStyles.labelSmall(context),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+
+                // Slider per visualizzare i grafici
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3, // Ridotta l'altezza del grafico
+                  child: PageView.builder(
+                    itemCount: eserciziMap.keys.length,
+                    itemBuilder: (context, index) {
+                      final esercizio = eserciziMap.keys.elementAt(index);
+                      final datiEsercizio = eserciziMap[esercizio]!;
+
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.015),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.blueAccent, width: 1.5),
+                          ),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                esercizio,
+                                style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
+                              ),
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                              Expanded(
+                                child: LineChart(
+                                  LineChartData(
+                                    gridData: FlGridData(
+                                      show: true,
+                                      drawVerticalLine: true,
+                                      getDrawingHorizontalLine: (value) {
+                                        return FlLine(
+                                          color: Colors.blueAccent.withOpacity(0.2),
+                                          strokeWidth: 1,
+                                        );
+                                      },
+                                      getDrawingVerticalLine: (value) {
+                                        return FlLine(
+                                          color: Colors.blueAccent.withOpacity(0.2),
+                                          strokeWidth: 1,
+                                        );
+                                      },
+                                    ),
+                                    titlesData: FlTitlesData(
+                                      bottomTitles: AxisTitles(
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 20, // Ridotto per risparmiare spazio
+                                          getTitlesWidget: (value, meta) {
+                                            final int index = value.toInt();
+                                            if (index == 0 || index == datiEsercizio.length - 1) {
+                                              final date = datiEsercizio[index]['data'];
+                                              return SideTitleWidget(
+                                                axisSide: meta.axisSide,
+                                                child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                      right: index == datiEsercizio.length - 1 ? MediaQuery.of(context).size.width * 0.05 : 0.0, // Offset a destra per l'ultima data
+                                                      ),
+                                                child: Text(
+                                                  date.substring(5), // Mostra MM-GG
+                                                  style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
+                                                ),
+                                                ),
+                                              );
+                                            }
+                                            return SideTitleWidget(
+                                              axisSide: meta.axisSide,
+                                              child: SizedBox.shrink(),
+                                            );
+                                          },
+                                          interval: 1,
+                                        ),
+                                      ),
+                                      leftTitles: AxisTitles(
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 30,
+                                          getTitlesWidget: (value, meta) {
+                                            final firstPeso = datiEsercizio.first['peso'];
+                                            final lastPeso = datiEsercizio.last['peso'];
+                                            if (value == firstPeso || value == lastPeso) {
+                                              return SideTitleWidget(
+                                                axisSide: meta.axisSide,
+                                                child: Text(
+                                                  '${value.toInt()} kg',
+                                                  style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
+                                                ),
+                                              );
+                                            }
+                                            return SideTitleWidget(
+                                              axisSide: meta.axisSide,
+                                              child: SizedBox.shrink(),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      rightTitles: AxisTitles(
+                                        sideTitles: SideTitles(showTitles: false),
+                                      ),
+                                      topTitles: AxisTitles(
+                                        sideTitles: SideTitles(showTitles: false),
+                                      ),
+                                    ),
+                                    borderData: FlBorderData(
+                                      show: true,
+                                      border: Border.all(color: Colors.blueAccent),
+                                    ),
+                                    minX: 0,
+                                    maxX: (datiEsercizio.length - 1).toDouble(),
+                                    minY: datiEsercizio.map((e) => e['peso']).reduce((a, b) => a < b ? a : b) - 10,
+                                    maxY: datiEsercizio.map((e) => e['peso']).reduce((a, b) => a > b ? a : b) + 10,
+                                    lineBarsData: [
+                                      LineChartBarData(
+                                        spots: List.generate(datiEsercizio.length, (i) {
+                                          return FlSpot(i.toDouble(), datiEsercizio[i]['peso']);
+                                        }),
+                                        isCurved: true,
+                                        color: Colors.blueAccent,
+                                        barWidth: 2, // Ridotto lo spessore della linea
+                                        belowBarData: BarAreaData(
+                                          show: true,
+                                          color: Colors.blueAccent.withOpacity(0.3),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  Text(
-                    '${item['peso']} kg',
-                    style: ResponsiveTextStyles.labelLarge(context),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    ],
-  ),
-),
+                ),
+
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
                 // WOD e Bottone Visualizza Workout
                 Row(
@@ -255,62 +343,70 @@ Container(
                   children: [
                     Text(
                       'WOD',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Naviga alla pagina dei workout precedenti
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutPage(testMode: true),
+                            ),
+                          );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.03,
+                          vertical: MediaQuery.of(context).size.height * 0.015,
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text('Visualizza Workout'),
+                      child: Text('Visualizza Workout', style: ResponsiveTextStyles.labelMedium(context),),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
 
                 // Slider WOD
                 Container(
-                  height: 160, // Altezza ridotta per adattarsi meglio alla pagina
+                  height: MediaQuery.of(context).size.height * 0.18, // Altezza ridotta
                   child: PageView(
                     children: data['wod'].map<Widget>((item) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.blueAccent, width: 2),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.blueAccent, width: 1.5),
                           ),
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Esercizio ${data['wod'].indexOf(item) + 1}',
-                                 style: ResponsiveTextStyles.labelLarge(context),
+                                style: ResponsiveTextStyles.labelMedium(context),
                               ),
-                              SizedBox(height: 10),
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                               Row(
                                 children: [
                                   Expanded(
                                     child: Text(
                                       '${item['esercizio']}',
-                                      style: ResponsiveTextStyles.labelMedium(context),
+                                      style: ResponsiveTextStyles.labelSmall(context),
                                     ),
                                   ),
                                   Text(
                                     '${item['serie']} serie | ${item['rep']} rep',
-                                     style: ResponsiveTextStyles.labelSmall(context),
+                                    style: ResponsiveTextStyles.labelSmall(context),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10),
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                               Text(
                                 'Note: ${item['note']}',
                                 style: ResponsiveTextStyles.labelSmall(context),
@@ -323,8 +419,7 @@ Container(
                   ),
                 ),
 
-
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               ],
             ),
           );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym/SignUp/signup_page.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:gym/login_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -14,7 +15,7 @@ class WelcomePage extends StatelessWidget {
             children: [
               Text(
                 'Benvenuto!',
-                 style: Theme.of(context).textTheme.headline1,
+                 style: ResponsiveTextStyles.headlineLarge(context),
               ),
               SizedBox(height: 40),
               ElevatedButton(

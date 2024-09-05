@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gym/SignUp/General/profile_world_crew_page.dart';
 import 'package:intl/intl.dart';
-import 'package:gym/SignUp/General/profile_world_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
 

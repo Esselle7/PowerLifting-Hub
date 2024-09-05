@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'package:flutter/material.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String?> getToken() async {
@@ -23,8 +26,14 @@ class NetworkService {
   NetworkService();
 
   
- Future<bool> authenticate() async {
+ Future<bool> authenticate(BuildContext context) async {
   final url = Uri.parse('http://192.168.1.17:8080/gym/authenticate');
+  //final userProfile = Provider.of<UserProfile>(context, listen: false);
+  Map<String, dynamic> profile;
+  profile = {
+        'username': 'simone',
+        };
+
 
   try {
     final response = await http.post(
@@ -32,6 +41,7 @@ class NetworkService {
       headers: {
         'Content-Type': 'application/json',
       },
+      body:jsonEncode(profile),
     );
 
     if (response.statusCode == 200) {
@@ -70,18 +80,18 @@ Future<http.Response> _makeRequest(
 }
 
 Future<bool> _sendDataWithRetry(
-    String url, String jsonString, Map<String, String> headers, int retryCount) async {
+    String url, String jsonString, Map<String, String> headers, int retryCount, BuildContext context) async {
   try {
     final response = await _makeRequest(url, 'POST', headers: headers, body: jsonString);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       if (response.body.contains('token scaduto')) {
         if (retryCount > 0) {
-          if (!await authenticate()) {
+          if (!await authenticate(context)) {
             return false;
           }
           headers['Authorization'] = 'Bearer $getToken()';
-          return await _sendDataWithRetry(url, jsonString, headers, retryCount - 1);
+          return await _sendDataWithRetry(url, jsonString, headers, retryCount - 1, context);
         } else {
           return false;
         }
@@ -96,19 +106,29 @@ Future<bool> _sendDataWithRetry(
   }
 }
 
-Future<bool> sendData(Map<String, dynamic> json, String district) async {
-  final url = 'http://192.168.1.17:8080/gym/$district';
+Future<bool> sendData(Map<String, dynamic> json, String district, String port, BuildContext context) async {
+  final url = 'http://192.168.1.17:$port/gym/$district';
   final jsonString = jsonEncode(json);
   while(await getToken() == null) {
-    await authenticate();
+    await authenticate(context);
   }
-
-  final headers = {
+  final headers;
+  if(district == "login")
+  {
+    headers = {
+    'Content-Type': 'application/json',
+    //'Authorization': 'Bearer $getToken()',
+    };
+  }
+  else{
+    headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer $getToken()',
-  };
+    };
+  }
+  
 
-  return await _sendDataWithRetry(url, jsonString, headers, 3); 
+  return await _sendDataWithRetry(url, jsonString, headers, 3, context); 
 }
 
 

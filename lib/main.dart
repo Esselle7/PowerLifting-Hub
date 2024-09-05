@@ -7,9 +7,12 @@ import 'package:gym/Theme/light_teme.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:gym/wellcome_page.dart';
-
+import 'package:dart_ping/dart_ping.dart';
 void main() {
-  
+  /*final ping = Ping('http://192.168.1.17:8080', count: 5);
+  ping.stream.listen((event) {
+    print(event);
+  });*/
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserProfile(),
@@ -41,5 +44,9 @@ Future<File> writeProfile(Map<String, dynamic> profile) async {
   final file = await _localFile;
   return file.writeAsString(json.encode(profile));
 }
+
+
+
+
 
 

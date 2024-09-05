@@ -391,8 +391,9 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                     String profileJson = jsonEncode(profile);
                     print(profileJson);
                     if(!widget.testMode){
-                      networkService.sendData(profile, "registrazione");
+                      networkService.sendData(profile, "registrazione", "8080", context);
                     }
+                    userProfile.reset();
                     Navigator.push(
                     context,
                     MaterialPageRoute(
