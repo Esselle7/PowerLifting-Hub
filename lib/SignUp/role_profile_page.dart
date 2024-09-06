@@ -1,92 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Services/standardAppBar.dart';
 import 'package:gym/SignUp/Coach/coach_profile_page.dart';
-import 'Athlete/athlete_profile_page.dart';
+import 'package:gym/SignUp/Athlete/athlete_profile_page.dart';
+import 'package:gym/Theme/responsive_button_style.dart'; // Importa il file per i bottoni
 
 class RolePage extends StatelessWidget {
+  const RolePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tell me about you'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
-      ),
+      appBar: StandardAppBar(title: "Dimmi qualcosa di più"),
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            ResponsiveButtonStyle.largeButton(
+              context: context,
+              buttonText: 'Sono un atleta',
+              icon: Icons.directions_run, // Icona per atleta
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AthleteProfilePage(isBoth: false)), // FIXME
+                  MaterialPageRoute(builder: (context) => AthleteProfilePage(isBoth: false)),
                 );
               },
-              child: Text(
-                'I\'m Athlete',
-                style: TextStyle(fontSize: 20), 
-                
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:  Theme.of(context).mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 5,
-                shadowColor: Colors.black45,
-              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            ResponsiveButtonStyle.largeButton(
+              context: context,
+              buttonText: 'Sono un preparatore',
+              icon: Icons.fitness_center, // Icona per preparatore
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => CoachProfilePage(isBoth: false),
-                  ),
+                  MaterialPageRoute(builder: (context) => CoachProfilePage(isBoth: false)),
                 );
               },
-              child: Text(
-                'I\'m Preparator',
-                style: TextStyle(fontSize: 20),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:  Theme.of(context).mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 5,
-                shadowColor: Colors.black45,
-              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            ResponsiveButtonStyle.largeButton(
+              context: context,
+              buttonText: 'Sono entrambi',
+              icon: Icons.people, // Icona per entrambi
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => CoachProfilePage(isBoth: true),
-                  ),
+                  MaterialPageRoute(builder: (context) => CoachProfilePage(isBoth: true)),
                 );
               },
-              child: Text(
-                'I\'m both',
-                style: TextStyle(fontSize: 20),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 5,
-                shadowColor: Colors.black45,
-              ),
             ),
           ],
         ),

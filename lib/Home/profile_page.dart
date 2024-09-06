@@ -7,12 +7,11 @@ import 'package:gym/Services/homeAppBar.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool testMode;
 
-  ProfilePage({required this.testMode});
+  const ProfilePage({super.key, required this.testMode});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -69,6 +68,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: HomeAppBar(title: "Profilo"),
@@ -76,11 +78,11 @@ class _ProfilePageState extends State<ProfilePage> {
         future: _profileData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Errore: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return Center(child: Text('Nessun dato disponibile'));
+            return const Center(child: Text('Nessun dato disponibile'));
           }
 
           final data = snapshot.data!;
@@ -96,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(12.0), // Ridotto il padding
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -104,7 +106,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Avatar e Informazioni Personali
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,10 +114,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CircleAvatar(
-                                radius: MediaQuery.of(context).size.width * 0.12, // Ridotto il raggio
+                                radius: screenWidth * 0.12,
                                 backgroundImage: AssetImage('assets/${data['avatar']}.jpeg'),
                               ),
-                              SizedBox(width: MediaQuery.of(context).size.width * 0.02), // Spazio proporzionale
+                              SizedBox(width: screenWidth * 0.02),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           '${data['nome']} ${data['cognome']}',
                                           style: ResponsiveTextStyles.labelMedium(context),
                                         ),
-                                        SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                                        SizedBox(width: screenWidth * 0.10),
                                         ElevatedButton(
                                           onPressed: () {
                                             Navigator.push(
@@ -141,19 +142,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                             backgroundColor: Colors.transparent,
                                             foregroundColor: Colors.blueAccent,
                                             padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context).size.width * 0.015,
-                                              vertical: MediaQuery.of(context).size.height * 0.01,
+                                              horizontal: screenWidth * 0.030,
+                                              vertical: screenHeight * 0.01,
                                             ),
-                                            side: BorderSide(color: Colors.blueAccent),
+                                            side: const BorderSide(color: Colors.blueAccent),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius: BorderRadius.circular((screenWidth * 0.03)),
                                             ),
                                           ),
                                           child: Row(
                                             children: [
-                                              Icon(Icons.edit, color: Colors.blueAccent),
-                                              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                                              Text('Edit'),
+                                              const Icon(Icons.edit, color: Colors.blueAccent),
+                                              SizedBox(width: screenWidth * 0.01),
+                                              const Text('Edit'),
                                             ],
                                           ),
                                         ),
@@ -163,13 +164,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                       '${data['citta']}',
                                       style: ResponsiveTextStyles.labelSmall(context),
                                     ),
-                                    SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                                    SizedBox(height: screenHeight * 0.015),
                                     Wrap(
-                                      spacing: MediaQuery.of(context).size.width * 0.02,
+                                      spacing: screenWidth * 0.02,
                                       children: data['badge'].map<Widget>((badge) {
                                         return Column(
                                           children: [
-                                            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+                                            SizedBox(height: screenHeight * 0.005),
                                             Text(
                                               badge.replaceAll('BADGE_', ''),
                                               style: ResponsiveTextStyles.labelMedium(context),
@@ -188,18 +189,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                SizedBox(height: screenHeight * 0.02),
 
                 // Storico
                 Text(
                   'Storico',
                   style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                SizedBox(height: screenHeight * 0.015),
 
                 // Slider per visualizzare i grafici
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3, // Ridotta l'altezza del grafico
+                  height: screenHeight * 0.3,
                   child: PageView.builder(
                     itemCount: eserciziMap.keys.length,
                     itemBuilder: (context, index) {
@@ -207,14 +208,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       final datiEsercizio = eserciziMap[esercizio]!;
 
                       return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.015),
+                        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.015),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.blueAccent, width: 1.5),
+                            borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                            border: Border.all(color: Colors.blueAccent, width: screenWidth * 0.005),
                           ),
-                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                          padding: EdgeInsets.all(screenWidth * 0.02),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -222,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 esercizio,
                                 style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
                               ),
-                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                              SizedBox(height: screenHeight * 0.015),
                               Expanded(
                                 child: LineChart(
                                   LineChartData(
@@ -246,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       bottomTitles: AxisTitles(
                                         sideTitles: SideTitles(
                                           showTitles: true,
-                                          reservedSize: 20, // Ridotto per risparmiare spazio
+                                          reservedSize: 20,
                                           getTitlesWidget: (value, meta) {
                                             final int index = value.toInt();
                                             if (index == 0 || index == datiEsercizio.length - 1) {
@@ -254,19 +255,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                               return SideTitleWidget(
                                                 axisSide: meta.axisSide,
                                                 child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                      right: index == datiEsercizio.length - 1 ? MediaQuery.of(context).size.width * 0.05 : 0.0, // Offset a destra per l'ultima data
-                                                      ),
-                                                child: Text(
-                                                  date.substring(5), // Mostra MM-GG
-                                                  style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
-                                                ),
+                                                  padding: EdgeInsets.only(
+                                                    right: index == datiEsercizio.length - 1 ? screenWidth * 0.05 : 0.0,
+                                                  ),
+                                                  child: Text(
+                                                    date.substring(5),
+                                                    style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
+                                                  ),
                                                 ),
                                               );
                                             }
                                             return SideTitleWidget(
                                               axisSide: meta.axisSide,
-                                              child: SizedBox.shrink(),
+                                              child: const SizedBox.shrink(),
                                             );
                                           },
                                           interval: 1,
@@ -290,15 +291,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                             }
                                             return SideTitleWidget(
                                               axisSide: meta.axisSide,
-                                              child: SizedBox.shrink(),
+                                              child: const SizedBox.shrink(),
                                             );
                                           },
                                         ),
                                       ),
-                                      rightTitles: AxisTitles(
+                                      rightTitles: const AxisTitles(
                                         sideTitles: SideTitles(showTitles: false),
                                       ),
-                                      topTitles: AxisTitles(
+                                      topTitles: const AxisTitles(
                                         sideTitles: SideTitles(showTitles: false),
                                       ),
                                     ),
@@ -317,7 +318,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         }),
                                         isCurved: true,
                                         color: Colors.blueAccent,
-                                        barWidth: 2, // Ridotto lo spessore della linea
+                                        barWidth: 2,
                                         belowBarData: BarAreaData(
                                           show: true,
                                           color: Colors.blueAccent.withOpacity(0.3),
@@ -335,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
 
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                SizedBox(height: screenHeight * 0.02),
 
                 // WOD e Bottone Visualizza Workout
                 Row(
@@ -355,71 +356,102 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.transparent,
                         padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.03,
-                          vertical: MediaQuery.of(context).size.height * 0.015,
+                          horizontal: screenWidth * 0.03,
+                          vertical: screenHeight * 0.015,
                         ),
+                        side: const BorderSide(color: Colors.blueAccent),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
                         ),
                       ),
-                      child: Text('Visualizza Workout', style: ResponsiveTextStyles.labelMedium(context),),
+                      child: Text('Visualizza Workout', style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),),
                     ),
                   ],
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-
+                SizedBox(height: screenHeight * 0.015),
                 // Slider WOD
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.18, // Altezza ridotta
-                  child: PageView(
-                    children: data['wod'].map<Widget>((item) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.02),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.blueAccent, width: 1.5),
-                          ),
-                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Esercizio ${data['wod'].indexOf(item) + 1}',
-                                style: ResponsiveTextStyles.labelMedium(context),
+                SizedBox(
+                    height: screenHeight * 0.20, // Altezza del slider (20% dell'altezza dello schermo)
+                    child: PageView(
+                      scrollDirection: Axis.horizontal,
+                      children: (data['wod'] as List<dynamic>).map<Widget>((exercise) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.transparent, // Sfondo trasparente
+                              border: Border.all(
+                                color: Colors.blueAccent, // Colore del bordo
+                                width: screenWidth * 0.005, // Larghezza del bordo (sottile e responsive)
                               ),
-                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-                              Row(
+                              borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(screenWidth * 0.04),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${item['esercizio']}',
-                                      style: ResponsiveTextStyles.labelSmall(context),
-                                    ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.fitness_center, color: Colors.blueAccent, size: screenWidth * 0.08),
+                                      SizedBox(width: screenWidth * 0.02),
+                                      Expanded(
+                                        child: Text(
+                                          exercise['esercizio'],
+                                          style: ResponsiveTextStyles.labelMedium(context),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Divider(color: Colors.blueAccent, thickness: screenWidth * 0.002),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.repeat, color: Colors.blueAccent, size: screenWidth * 0.05),
+                                          SizedBox(width: screenWidth * 0.02),
+                                          Text(
+                                            'Serie: ${exercise['serie']}',
+                                            style: ResponsiveTextStyles.labelSmall(context),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.looks, color: Colors.blueAccent, size: screenWidth * 0.05),
+                                          SizedBox(width: screenWidth * 0.02),
+                                          Text(
+                                            'Ripetizioni: ${exercise['rep']}',
+                                            style: ResponsiveTextStyles.labelSmall(context),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: screenHeight * 0.01),
+                                  Text(
+                                    'Note:',
+                                    style: ResponsiveTextStyles.labelSmall(context),
                                   ),
                                   Text(
-                                    '${item['serie']} serie | ${item['rep']} rep',
+                                    exercise['note'],
                                     style: ResponsiveTextStyles.labelSmall(context),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-                              Text(
-                                'Note: ${item['note']}',
-                                style: ResponsiveTextStyles.labelSmall(context),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                SizedBox(height: screenHeight * 0.02),
               ],
             ),
           );

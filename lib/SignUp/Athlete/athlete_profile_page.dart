@@ -5,32 +5,29 @@ import 'package:gym/SignUp/General/profile_world_crew_page.dart';
 import 'package:intl/intl.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 import 'package:provider/provider.dart';
+import 'package:gym/Theme/responsive_button_style.dart'; // Importa il file per i bottoni
 
 class AthleteProfilePage extends StatefulWidget {
   final bool isBoth;
 
-  AthleteProfilePage({required this.isBoth});
+  const AthleteProfilePage({super.key, required this.isBoth});
 
   @override
   _AthleteProfilePageState createState() => _AthleteProfilePageState();
 }
 
-
-
 class _AthleteProfilePageState extends State<AthleteProfilePage> {
-
   @override
-void initState() {
-  super.initState();
-  context.read<UserProfile>().category = 'POWERLIFTER';
-}
+  void initState() {
+    super.initState();
+    context.read<UserProfile>().category = 'POWERLIFTER';
+  }
 
   final FocusNode _squatFocusNode = FocusNode();
   final FocusNode _benchPressFocusNode = FocusNode();
   final FocusNode _deadliftFocusNode = FocusNode();
   final FocusNode _dipsFocusNode = FocusNode();
 
-  // FocusNode per i campi di data
   final FocusNode _squatDateFocusNode = FocusNode();
   final FocusNode _benchPressDateFocusNode = FocusNode();
   final FocusNode _deadliftDateFocusNode = FocusNode();
@@ -76,7 +73,7 @@ void initState() {
 
   Widget _buildNumberInput(String label, double value, ValueChanged<double> onChanged, FocusNode focusNode, TextEditingController dateController, FocusNode dateFocusNode) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.02),
       child: Row(
         children: [
           Expanded(
@@ -86,24 +83,24 @@ void initState() {
             ),
           ),
           SizedBox(
-            width: 100,
+            width: MediaQuery.of(context).size.width * 0.3,
             child: TextField(
               focusNode: focusNode,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
-                    color: Colors.blue,  // Colore del bordo
-                    width: 3.0,          // Spessore del bordo
+                  borderSide: const BorderSide(
+                    color: Colors.blue, 
+                    width: 3.0, 
                   ),
                 ),
                 filled: true,
-                fillColor:  Theme.of(context).primaryColor, // Sfondo bianco
+                fillColor: Theme.of(context).primaryColor, 
                 suffixText: 'Kg',
                 labelText: 'Inserisci',
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                suffixStyle: TextStyle(color: Colors.blueAccent), // Colore del suffisso
+                suffixStyle: const TextStyle(color: Colors.blueAccent),
               ),
               onChanged: (text) {
                 double? newValue = double.tryParse(text);
@@ -113,24 +110,23 @@ void initState() {
               },
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
           SizedBox(
-            width: 150,
+            width: MediaQuery.of(context).size.width * 0.4,
             child: TextField(
               controller: dateController,
               focusNode: dateFocusNode,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.blueAccent,
                     width: 2.0,
                   ),
                 ),
                 filled: true,
-                fillColor:  Theme.of(context).primaryColor,
+                fillColor: Theme.of(context).primaryColor,
                 labelText: 'Inserisci Data',
-                //labelStyle: TextStyle(color: Colors.grey),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               ),
               readOnly: true,
@@ -197,19 +193,19 @@ void initState() {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Crea Profilo Atleta'),
+          title: const Text('Crea Profilo Atleta'),
           backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
+          foregroundColor: Colors.blueAccent,
           leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () async {
-            userProfile.reset();
-            Navigator.of(context).pop();
-          },
-        ),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              userProfile.reset();
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -218,7 +214,7 @@ void initState() {
               children: [
                 CarouselSlider(
                   options: CarouselOptions(
-                    height: 200.0,
+                    height: MediaQuery.of(context).size.height * 0.23,
                     enlargeCenterPage: true,
                     onPageChanged: (index, reason) {
                       _onCategoryChange(index);
@@ -239,29 +235,29 @@ void initState() {
                           child: Image.asset(
                             i,
                             fit: BoxFit.cover,
-                            width: 1000,
+                            width: MediaQuery.of(context).size.width,
                           ),
                         );
                       },
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Center(
                   child: Text(
                     userProfile.category,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Categoria Peso', style: Theme.of(context).textTheme.innerbox),
-                    SizedBox(width: 10),
-                    Container(
-                      width: 100,
-                      height: 60,
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: MediaQuery.of(context).size.height * 0.07,
                       child: CupertinoPicker(
                         itemExtent: 32.0,
                         onSelectedItemChanged: (index) {
@@ -270,20 +266,20 @@ void initState() {
                           });
                         },
                         children: _weightClasses.map((String value) {
-                          return Text(value, style: TextStyle(color:Colors.blueAccent));
+                          return Text(value, style: const TextStyle(color: Colors.blueAccent));
                         }).toList(),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 _buildNumberInput('Squat', userProfile.squat, (value) {
                   setState(() {
                     userProfile.squat = value;
                     _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _squatFocusNode, _squatDateController, _squatDateFocusNode),
-                _buildNumberInput('Panca Piana', userProfile.benchPress, (value) {
+                _buildNumberInput('Panca  Piana', userProfile.benchPress, (value) {
                   setState(() {
                     userProfile.benchPress = value;
                     _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
@@ -301,15 +297,15 @@ void initState() {
                     _updateLevel(userProfile.squat, userProfile.benchPress, userProfile.deadlift, userProfile.dips);
                   });
                 }, _dipsFocusNode, _dipsDateController, _dipsDateFocusNode),*/
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Center(
-                  child: ElevatedButton(
+                  child: ResponsiveButtonStyle.mediumButton(
+                    context: context,
+                    buttonText: 'Continua',
+                    icon: Icons.navigate_next, // Aggiungi un'icona per "Continua"
                     onPressed: () {
                       _unfocusAllTextFields();
-                      bool isAthlete = true;
-                      if(widget.isBoth){
-                        isAthlete = false;
-                      }
+                      bool isAthlete = !widget.isBoth;
                       Provider.of<UserProfile>(context, listen: false).updateAthleteProfile(
                         category: userProfile.category,
                         isMale: userProfile.isMale,
@@ -333,17 +329,9 @@ void initState() {
                         ),
                       );
                     },
-                    child: Text('Continua',  style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
               ],
             ),
           ),

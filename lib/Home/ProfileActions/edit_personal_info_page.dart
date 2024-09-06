@@ -9,7 +9,7 @@ import 'package:gym/SignUp/user_profile_state.dart'; // Importa il file UserProf
 class EditProfilePage extends StatefulWidget {
   final bool testMode; // Aggiungi un parametro per la modalità di test
 
-  EditProfilePage({required this.testMode}); // Modifica il costruttore per accettare il parametro
+  const EditProfilePage({super.key, required this.testMode}); // Modifica il costruttore per accettare il parametro
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -60,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _updateProfile() async {
-    final url = 'https://yourapiendpoint.com/updateProfile'; // Sostituisci con il tuo endpoint API
+    const url = 'https://yourapiendpoint.com/updateProfile'; // Sostituisci con il tuo endpoint API
 
     final response = await http.post(
       Uri.parse(url),
@@ -82,7 +82,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } else {
       // Gestisci l'errore qui
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Errore durante l\'aggiornamento del profilo')),
+        const SnackBar(content: Text('Errore durante l\'aggiornamento del profilo')),
       );
     }
   }
@@ -111,21 +111,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
           FocusScope.of(context).unfocus(); // Dismiss keyboard when tapping outside
         },
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: ListView(
               children: [
                 _buildTextField(_firstNameController, 'Nome', Icons.person, _firstNameFocusNode),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildTextField(_lastNameController, 'Cognome', Icons.person, _lastNameFocusNode),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildDateField(_dobController, 'Data di Nascita', Icons.calendar_today, _dobFocusNode),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildTextField(_emailController, 'Email', Icons.email, _emailFocusNode),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _buildTextField(_usernameController, 'Username', Icons.person, _usernameFocusNode),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 
               ],
             ),
@@ -151,32 +151,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
         prefixIcon: Icon(icon, color: Colors.blueAccent),
         filled: true,
         fillColor: Theme.of(context).primaryColor,
-        labelStyle: TextStyle(color: Colors.blueAccent),
+        labelStyle: const TextStyle(color: Colors.blueAccent),
         errorText: errorText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.blueAccent,
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.blueAccent,
             width: 3.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.grey,
             width: 2.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.red,
             width: 2.0,
           ),
@@ -198,31 +198,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
         prefixIcon: Icon(icon, color: Colors.blueAccent),
         filled: true,
         fillColor: Theme.of(context).primaryColor,
-        labelStyle: TextStyle(color: Colors.blueAccent),
+        labelStyle: const TextStyle(color: Colors.blueAccent),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.blueAccent,
             width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.blueAccent,
             width: 3.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.grey,
             width: 2.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.red,
             width: 2.0,
           ),

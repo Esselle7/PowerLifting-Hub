@@ -4,7 +4,7 @@ class ConfirmAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title; // Campo per il titolo
   final VoidCallback onConfirm; // Evento callback per il pulsante di conferma
 
-  ConfirmAppBar({
+  const ConfirmAppBar({super.key, 
     required this.title, // Costruttore che accetta il titolo
     required this.onConfirm, // Costruttore che accetta la funzione di conferma
   });
@@ -18,7 +18,7 @@ class ConfirmAppBar extends StatelessWidget implements PreferredSizeWidget {
           foregroundColor: Colors.blueAccent,
           title: Text(
             title, // Usa il titolo passato come parametro
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
               fontSize: 25,
@@ -26,7 +26,7 @@ class ConfirmAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           elevation: 0, // Rimuove l'ombra
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop(); // Torna indietro alla schermata precedente
             },
@@ -34,7 +34,7 @@ class ConfirmAppBar extends StatelessWidget implements PreferredSizeWidget {
           actions: [
             TextButton(
               onPressed: onConfirm, // Chiama la funzione di conferma quando premuto
-              child: Text(
+              child: const Text(
                 'Conferma',
                 style: TextStyle(
                   fontSize: 18,
@@ -54,5 +54,5 @@ class ConfirmAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 1.0); // Altezza totale dell'AppBar
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0); // Altezza totale dell'AppBar
 }

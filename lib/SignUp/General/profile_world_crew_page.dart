@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Theme/responsive_button_style.dart';
+import 'package:provider/provider.dart';
 import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
 import 'package:gym/SignUp/General/profile_world_federation_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
-import 'package:provider/provider.dart';
 
 // Modello per i dati delle crew
 class Crew {
@@ -34,12 +35,11 @@ final List<Crew> nationTopCrews = [
 Future<List<Crew>> fetchTopCrews(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
-      return Future.delayed(Duration(seconds: 1), () => provinceTopCrews);
+      return Future.delayed(const Duration(seconds: 1), () => provinceTopCrews);
     } else if (type == 'nation') {
-      return Future.delayed(Duration(seconds: 1), () => nationTopCrews);
+      return Future.delayed(const Duration(seconds: 1), () => nationTopCrews);
     }
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
   return [];
@@ -48,15 +48,14 @@ Future<List<Crew>> fetchTopCrews(String type, {required bool testMode}) async {
 // Simula la chiamata API per ottenere le crew
 Future<List<Crew>> fetchCrews({required bool testMode}) async {
   if (testMode) {
-    // Lista di crew di test
     return List.generate(
       30,
       (index) => Crew(name: 'TestCrew $index', province: 'Provincia', nation: 'Nazione'),
     );
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
+  return [];
 }
 
 // Modello per i dati delle persone
@@ -79,20 +78,20 @@ final List<Person> persons = List.generate(
 class ProfileWorldCrewPage extends StatefulWidget {
   final bool testMode;
 
-  ProfileWorldCrewPage({required this.testMode});
+  const ProfileWorldCrewPage({super.key, required this.testMode});
 
   @override
   _ProfileWorldCrewPageState createState() => _ProfileWorldCrewPageState();
 }
 
 class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
-  final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
+  final FocusNode _focusNode = FocusNode();
 
   late Future<List<Crew>> _provinceTopCrewsFuture;
   late Future<List<Crew>> _nationTopCrewsFuture;
 
-  Set<String> _selectedCrews = {}; // Stato per tenere traccia delle crew selezionate
-  List<Crew> _filteredCrews = []; // Lista delle crew filtrate in base alla ricerca
+  final Set<String> _selectedCrews = {};
+  List<Crew> _filteredCrews = [];
   String _searchQuery = '';
 
   @override
@@ -100,7 +99,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
     super.initState();
     _provinceTopCrewsFuture = fetchTopCrews('province', testMode: widget.testMode);
     _nationTopCrewsFuture = fetchTopCrews('nation', testMode: widget.testMode);
-    _fetchCrews(); // Ottiene le crew iniziali
+    _fetchCrews();
   }
 
   Future<void> _fetchCrews() async {
@@ -135,7 +134,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withOpacity(0.1),
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
       builder: (context) {
@@ -147,28 +146,28 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
             return Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.07, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Expanded(
                       child: FutureBuilder<List<Crew>>(
                         future: crewFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
                             return Center(child: Text('Errore: ${snapshot.error}', style: TextStyle(color: Colors.blueAccent)));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
+                            return const Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
                           } else {
                             return ListView.builder(
                               controller: scrollController,
@@ -176,9 +175,9 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                               itemBuilder: (context, index) {
                                 final crew = snapshot.data![index];
                                 return ListTile(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                                  contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.blue, // Colore fittizio per i cerchietti delle crew
+                                    backgroundColor: Colors.blue,
                                     child: Text(crew.name[0], style: TextStyle(color: Colors.blueAccent)),
                                   ),
                                   title: Text(crew.name, style: TextStyle(color: Colors.blueAccent)),
@@ -198,24 +197,24 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
         );
       },
     ).whenComplete(() {
-          _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
-        });
+      _focusNode.unfocus();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus(); // Nasconde la tastiera se clicchi altrove
+        FocusScope.of(context).unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Cerca Persone'),
+          title: const Text('Cerca Persone'),
           backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
+          foregroundColor: Colors.blueAccent,
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Column(
             children: [
               // Campo di ricerca
@@ -229,7 +228,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
                 ),
               ),
-              SizedBox(height: 16.0),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Sezione per le crew filtrate
               Expanded(
                 child: _searchQuery.isNotEmpty
@@ -237,17 +236,16 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                         ? Center(
                             child: Text(
                               'Nessuna crew trovata',
-                              style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                              style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueAccent),
                             ),
                           )
                         : GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4, // Numero fisso di colonne
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
+                              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                              crossAxisSpacing: MediaQuery.of(context).size.width * 0.02,
+                              mainAxisSpacing: MediaQuery.of(context).size.width * 0.02,
                               childAspectRatio: 1,
                             ),
-                            
                             itemCount: _filteredCrews.length,
                             itemBuilder: (context, index) {
                               final crew = _filteredCrews[index];
@@ -261,8 +259,8 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                                       alignment: Alignment.bottomLeft,
                                       children: [
                                         Container(
-                                          width: 40,
-                                          height: 40,
+                                          width: MediaQuery.of(context).size.width * 0.1,
+                                          height: MediaQuery.of(context).size.width * 0.1,
                                           decoration: BoxDecoration(
                                             color: isSelected ? Colors.green : Colors.blue,
                                             shape: BoxShape.circle,
@@ -278,13 +276,13 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                                             left: 0,
                                             child: Icon(
                                               Icons.check_circle,
-                                              size: 20,
+                                              size: MediaQuery.of(context).size.width * 0.07,
                                               color: Colors.blueAccent,
                                             ),
                                           ),
                                       ],
                                     ),
-                                    SizedBox(height: 4),
+                                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                     Text(
                                       crew.name,
                                       style: TextStyle(color: Colors.blueAccent),
@@ -295,79 +293,49 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                               );
                             },
                           )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per Top 5 Crew della Provincia
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Crew della Provincia',
                 onPressed: () => _showBottomSheet('Top 5 Crew della Provincia', _provinceTopCrewsFuture),
-                child: Text(
-                  'Top 5 Crew della Provincia',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                icon: Icons.star,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per Top 5 Crew della Nazione
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Crew della Nazione',
                 onPressed: () => _showBottomSheet('Top 5 Crew della Nazione', _nationTopCrewsFuture),
-                child: Text(
-                  'Top 5 Crew della Nazione',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                icon: Icons.flag,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per il passo successivo
-              ElevatedButton(
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Next Step',
                 onPressed: () {
                   final userProfile = Provider.of<UserProfile>(context, listen: false);
                   userProfile.updateWorldCrews(crews: _selectedCrews.toList());
-                  if(userProfile.isAthlete || userProfile.isBoth){
+                  if (userProfile.isAthlete || userProfile.isBoth) {
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileWorldFederationPage(testMode: true),
-                    ),
-                  );
-                  }else{
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileWorldFederationPage(testMode: true),
+                      ),
+                    );
+                  } else {
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileWorldAthletePage(testMode: true),
-                    ),
-                  );
-
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileWorldAthletePage(testMode: true),
+                      ),
+                    );
                   }
-                  
                 },
-                child: Text(
-                  'Next Step',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).mainColor,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 5,
-                  shadowColor: Colors.black45,
-                ),
+                icon: null,
               ),
             ],
           ),

@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:gym/Home/home_page.dart';
 import 'package:gym/Services/network_services.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:gym/Theme/responsive_button_style.dart'; // Importa il file per i bottoni
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -62,8 +66,8 @@ class _LoginPageState extends State<LoginPage> {
           _unfocusAllTextFields();
         },
         child: Container(
-          padding: EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.blueAccent, Colors.lightBlueAccent],
               begin: Alignment.topCenter,
@@ -72,17 +76,16 @@ class _LoginPageState extends State<LoginPage> {
           ),
           child: Center(
             child: Container(
-              width: 350,
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor, // Colore di sfondo del contenitore
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     spreadRadius: 5,
                     blurRadius: 10,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -91,9 +94,9 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text(
                     'Login',
-                    style: Theme.of(context).textTheme.innerbox,
+                    style: ResponsiveTextStyles.headlineLarge(context)
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   _buildTextField(
                     _emailController,
                     'Email',
@@ -102,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.emailAddress,
                     error: _emailError,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   _buildTextField(
                     _passwordController,
                     'Password',
@@ -111,15 +114,17 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                     error: _passwordError,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                   if (_errorMessage.isNotEmpty)
                     Text(
                       _errorMessage,
-                      style: TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async{
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  ResponsiveButtonStyle.mediumButton(
+                    context: context,
+                    buttonText: 'Continue',
+                    onPressed: () async {
                       _resetFields();
                       final email = _emailController.text;
                       final password = _passwordController.text;
@@ -127,33 +132,23 @@ class _LoginPageState extends State<LoginPage> {
                         'username': email,
                         'password': password,
                       };
-                      if(await networkService.sendData(json, "login", "8080", context)){
+                      if (await networkService.sendData(json, "login", "8080", context)) {
                         setState(() {
-                            _emailError = true;
-                            _passwordError = true;
-                            _errorMessage = 'Username o password non corretti';
-                            _emailController.clear();
-                            _passwordController.clear();
-                            });
-                      }else{
-                          Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                      );
+                          _emailError = true;
+                          _passwordError = true;
+                          _errorMessage = 'Username o password non corretti';
+                          _emailController.clear();
+                          _passwordController.clear();
+                        });
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
                       }
                     },
-                    child: Text('Login', style: TextStyle(fontSize: 20)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 5,
-                      shadowColor: Colors.black45,
-                    ),
                   ),
                 ],
               ),
@@ -163,8 +158,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
- 
 
   Widget _buildTextField(
     TextEditingController controller,
@@ -183,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
         prefixIcon: Icon(icon, color: Colors.blueAccent),
         filled: true,
         fillColor: Theme.of(context).primaryColor,
-        labelStyle: TextStyle(color: Colors.blueAccent),
+        labelStyle: const TextStyle(color: Colors.blueAccent),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(

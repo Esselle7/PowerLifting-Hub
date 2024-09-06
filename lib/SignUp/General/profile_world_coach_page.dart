@@ -36,9 +36,9 @@ final List<Coach> nationTopCoaches = [
 Future<List<Coach>> fetchTopCoaches(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
-      return Future.delayed(Duration(seconds: 1), () => provinceTopCoaches);
+      return Future.delayed(const Duration(seconds: 1), () => provinceTopCoaches);
     } else if (type == 'nation') {
-      return Future.delayed(Duration(seconds: 1), () => nationTopCoaches);
+      return Future.delayed(const Duration(seconds: 1), () => nationTopCoaches);
     }
   } else {
     // Inserisci la logica della chiamata API per ottenere i dati reali
@@ -81,7 +81,7 @@ final List<Person> persons = List.generate(
 class ProfileWorldCoachPage extends StatefulWidget {
   final bool testMode;
 
-  ProfileWorldCoachPage({required this.testMode});
+  const ProfileWorldCoachPage({super.key, required this.testMode});
 
   @override
   _ProfileWorldCoachPageState createState() => _ProfileWorldCoachPageState();
@@ -93,7 +93,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
   late Future<List<Coach>> _provinceTopCoachesFuture;
   late Future<List<Coach>> _nationTopCoachesFuture;
 
-  Set<String> _selectedCoaches = {}; // Stato per tenere traccia dei coach selezionati
+  final Set<String> _selectedCoaches = {}; // Stato per tenere traccia dei coach selezionati
   List<Coach> _filteredCoaches = []; // Lista dei coach filtrati in base alla ricerca
   String _searchQuery = '';
   final NetworkService networkService = NetworkService();
@@ -138,7 +138,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.grey.withOpacity(0.1),
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
       builder: (context) {
@@ -150,7 +150,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
             return Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -159,19 +159,19 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Expanded(
                       child: FutureBuilder<List<Coach>>(
                         future: coachFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Errore: ${snapshot.error}', style: TextStyle(color: Colors.blueAccent)));
+                            return Center(child: Text('Errore: ${snapshot.error}', style: const TextStyle(color: Colors.blueAccent)));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
+                            return const Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
                           } else {
                             return ListView.builder(
                               controller: scrollController,
@@ -179,13 +179,13 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                               itemBuilder: (context, index) {
                                 final coach = snapshot.data![index];
                                 return ListTile(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                                   leading: CircleAvatar(
                                     backgroundColor: Colors.blue, // Colore fittizio per i cerchietti dei coach
-                                    child: Text(coach.name[0], style: TextStyle(color: Colors.blueAccent)),
+                                    child: Text(coach.name[0], style: const TextStyle(color: Colors.blueAccent)),
                                   ),
-                                  title: Text(coach.name, style: TextStyle(color: Colors.blueAccent)),
-                                  subtitle: Text('${coach.province}, ${coach.nation}', style: TextStyle(color: Colors.blueAccent)),
+                                  title: Text(coach.name, style: const TextStyle(color: Colors.blueAccent)),
+                                  subtitle: Text('${coach.province}, ${coach.nation}', style: const TextStyle(color: Colors.blueAccent)),
                                 );
                               },
                             );
@@ -213,7 +213,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Cerca Coach'),
+          title: const Text('Cerca Coach'),
           backgroundColor: Colors.transparent,
         foregroundColor: Colors.blueAccent,
         ),
@@ -225,26 +225,26 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
               TextField(
                 focusNode: _focusNode,
                 onChanged: _updateSearchQuery,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Digita il nome del tuo coach',
                   labelStyle: TextStyle(color: Colors.blueAccent),
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               // Sezione per i coach filtrati
               Expanded(
                 child: _searchQuery.isNotEmpty
                     ? _filteredCoaches.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: Text(
                               'Nessun coach trovato',
                               style: TextStyle(fontSize: 18, color: Colors.blueAccent),
                             ),
                           )
                         : GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4, // Numero fisso di colonne
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
@@ -275,7 +275,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                                           ),
                                         ),
                                         if (isSelected)
-                                          Positioned(
+                                          const Positioned(
                                             bottom: 0,
                                             left: 0,
                                             child: Icon(
@@ -286,10 +286,10 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                                           ),
                                       ],
                                     ),
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text(
                                       coach.name,
-                                      style: TextStyle(color: Colors.blueAccent),
+                                      style: const TextStyle(color: Colors.blueAccent),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -297,43 +297,43 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                               );
                             },
                           )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Pulsante per Top 5 Coach della Provincia
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   elevation: 5,
                 ),
                 onPressed: () => _showBottomSheet('Top 5 Coach della Provincia', _provinceTopCoachesFuture),
-                child: Text(
+                child: const Text(
                   'Top 5 Coach della Provincia',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Pulsante per Top 5 Coach della Nazione
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   elevation: 5,
                 ),
                 onPressed: () => _showBottomSheet('Top 5 Coach della Nazione', _nationTopCoachesFuture),
-                child: Text(
+                child: const Text(
                   'Top 5 Coach della Nazione',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               // Pulsante per il passo successivo
               ElevatedButton(
                 onPressed: () {
@@ -438,18 +438,18 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                     ),
                   );
                 },
-                child: Text(
-                  'Save',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).mainColor,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: 5,
                   shadowColor: Colors.black45,
+                ),
+                child: Text(
+                  'Save',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ],

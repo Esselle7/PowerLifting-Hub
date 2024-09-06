@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title; // Campo per il titolo
 
-  StandardAppBar({
+  const StandardAppBar({super.key, 
     required this.title, // Costruttore che accetta il titolo
   });
 
@@ -16,7 +16,7 @@ class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
           foregroundColor: Colors.blueAccent,
           title: Text(
             title, // Usa il titolo passato come parametro
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
               fontSize: 25,
@@ -24,7 +24,7 @@ class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           elevation: 0, // Rimuove l'ombra
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop(); // Torna indietro alla schermata precedente
             },
@@ -39,5 +39,5 @@ class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 1.0); // Altezza totale dell'AppBar
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0); // Altezza totale dell'AppBar
 }

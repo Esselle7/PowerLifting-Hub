@@ -7,14 +7,14 @@ import 'package:provider/provider.dart';
 class CoachProfileSkillsPage extends StatefulWidget {
   final bool isBoth;
 
-  CoachProfileSkillsPage({required this.isBoth});
+  const CoachProfileSkillsPage({super.key, required this.isBoth});
 
   @override
   _CoachProfileSkillsPageState createState() => _CoachProfileSkillsPageState();
 }
 
 class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
-  Map<String, int> _skills = {
+  final Map<String, int> _skills = {
     'Strength Training': 0,
     'Nutrition': 0,
     'Motivation': 0,
@@ -37,7 +37,7 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(skill, style: TextStyle(fontSize: 16)),
+        Text(skill, style: const TextStyle(fontSize: 16)),
         Row(
           children: List.generate(5, (index) {
             return IconButton(
@@ -59,7 +59,7 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Insert yout Skills'),
+        title: const Text('Insert yout Skills'),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.blueAccent,
       ),
@@ -73,8 +73,8 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: _buildSkillRow(skill, _skills[skill]!),
                 );
-              }).toList(),
-              SizedBox(height: 20),
+              }),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -97,10 +97,10 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
                   }
                     
                   },
-                  child: Text('Continua'),
+                  child: const Text('Continua'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

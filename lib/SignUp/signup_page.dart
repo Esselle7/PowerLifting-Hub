@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gym/SignUp/role_profile_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:gym/Theme/responsive_button_style.dart'; // Importa il file per i bottoni
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -15,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController(); // Aggiunto per conferma password
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
@@ -23,19 +27,17 @@ class _SignUpPageState extends State<SignUpPage> {
   final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-  final FocusNode _confirmPasswordFocusNode = FocusNode(); // Aggiunto per conferma password
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
   final FocusNode _dobFocusNode = FocusNode();
   final FocusNode _usernameFocusNode = FocusNode();
 
   bool isMale = true;
-  bool _passwordsMatch = true; // Variabile per controllare se le password combaciano
-  bool _isPasswordEmpty = true; // Variabile per controllare se i campi sono vuoti
+  bool _passwordsMatch = true;
+  bool _isPasswordEmpty = true;
 
   @override
   void initState() {
     super.initState();
-
-    // Aggiungi listener solo al campo di conferma della password
     _confirmPasswordController.addListener(_checkPasswordsMatch);
     _passwordController.addListener(_checkPasswordsMatch);
   }
@@ -46,7 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose(); // Aggiunto per conferma password
+    _confirmPasswordController.dispose();
     _dobController.dispose();
     _usernameController.dispose();
 
@@ -54,7 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _lastNameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
-    _confirmPasswordFocusNode.dispose(); // Aggiunto per conferma password
+    _confirmPasswordFocusNode.dispose();
     _dobFocusNode.dispose();
     _usernameFocusNode.dispose();
 
@@ -82,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: const Text('Sign Up'),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.blueAccent,
       ),
@@ -91,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
           _unfocusAllTextFields();
         },
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
           child: Form(
             key: _formKey,
             child: ListView(
@@ -99,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Sesso: ', style: TextStyle(fontSize: 18, color: Colors.blueAccent)),
+                    Text('Sesso: ', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: Colors.blueAccent)),
                     Switch(
                       value: isMale,
                       onChanged: (value) {
@@ -111,21 +113,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       inactiveThumbColor: Colors.pink,
                       inactiveTrackColor: Colors.pink.shade100,
                     ),
-                    Text(isMale ? 'M' : 'F', style: TextStyle(fontSize: 18, color: Colors.blueAccent)),
+                    Text(isMale ? 'M' : 'F', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: Colors.blueAccent)),
                   ],
                 ),
                 _buildTextField(_firstNameController, 'Nome', Icons.person, _firstNameFocusNode),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildTextField(_lastNameController, 'Cognome', Icons.person, _lastNameFocusNode),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildDateField(_dobController, 'Data di Nascita', Icons.calendar_today, _dobFocusNode),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildTextField(_emailController, 'Email', Icons.email, _emailFocusNode),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildTextField(_usernameController, 'Username', Icons.person_2_sharp, _usernameFocusNode),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildTextField(_passwordController, 'Password', Icons.lock, _passwordFocusNode, obscureText: true),
-                SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 _buildTextField(
                   _confirmPasswordController,
                   'Ripeti Password',
@@ -134,12 +136,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: true,
                   errorText: _isPasswordEmpty ? null : (_passwordsMatch ? null : 'Le password non combaciano'),
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                 Center(
-                  child: ElevatedButton(
+                  child: ResponsiveButtonStyle.mediumButton(
+                    context: context,
+                    buttonText: 'Prosegui',
+                    icon: Icons.navigate_next,
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // Aggiorna il profilo utente
                         Provider.of<UserProfile>(context, listen: false).updatePersonalInfo(
                           firstName: _firstNameController.text,
                           lastName: _lastNameController.text,
@@ -149,23 +153,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           username: _usernameController.text,
                           isMale: isMale,
                         );
-                        // Naviga alla pagina successiva
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => RolePage()),
                         );
                       }
                     },
-                    child: Text('Prosegui', style: TextStyle(fontSize: 20)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 5,
-                      shadowColor: Colors.black45,
-                    ),
                   ),
                 ),
               ],
@@ -187,49 +180,45 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
-      style: Theme.of(context).textTheme.innerbox,
+      style: ResponsiveTextStyles.labelMedium(context),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.blueAccent),
         filled: true,
-        fillColor:  Theme.of(context).primaryColor,
-        labelStyle: TextStyle(color: Colors.blueAccent),
+        fillColor: Theme.of(context).primaryColor,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
         errorText: errorText,
-        // Definizione dei bordi
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.blueAccent, // Colore del bordo
-            width: 2.0,              // Spessore del bordo
+            color: Colors.blueAccent,
+            width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.blueAccent, // Colore del bordo quando il campo è in focus
-            width: 3.0,          // Spessore del bordo quando il campo è in focus
+            color: Colors.blueAccent,
+            width: 3.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.grey,  // Colore del bordo quando il campo è abilitato
-            width: 2.0,          // Spessore del bordo quando il campo è abilitato
+            color: Colors.grey,
+            width: 2.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.red,   // Colore del bordo quando c'è un errore
-            width: 2.0,          // Spessore del bordo in caso di errore
+            color: Colors.red,
+            width: 2.0,
           ),
         ),
       ),
       obscureText: obscureText,
       validator: (value) {
-        /*if (value == null || value.isEmpty) {
-          return 'Per favore inserisci $label';
-        }*/
         return null;
       },
     );
@@ -239,41 +228,39 @@ class _SignUpPageState extends State<SignUpPage> {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
-      style: Theme.of(context).textTheme.innerbox,
+      style: ResponsiveTextStyles.labelMedium(context),
       decoration: InputDecoration(
         labelText: label,
-        
         prefixIcon: Icon(icon, color: Colors.blueAccent),
         filled: true,
-        fillColor:  Theme.of(context).primaryColor,
-        labelStyle: TextStyle(color: Colors.blueAccent),
-        // Definizione dei bordi
+        fillColor: Theme.of(context).primaryColor,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.blueAccent, // Colore del bordo
-            width: 2.0,              // Spessore del bordo
+            color: Colors.blueAccent,
+            width: 2.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.blueAccent, // Colore del bordo quando il campo è in focus
-            width: 3.0,         // Spessore del bordo quando il campo è in focus
+            color: Colors.blueAccent,
+            width: 3.0,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.grey,  // Colore del bordo quando il campo è abilitato
-            width: 2.0,          // Spessore del bordo quando il campo è abilitato
+            color: Colors.grey,
+            width: 2.0,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
           borderSide: BorderSide(
-            color: Colors.red,   // Colore del bordo quando c'è un errore
-            width: 2.0,          // Spessore del bordo in caso di errore
+            color: Colors.red,
+            width: 2.0,
           ),
         ),
       ),
@@ -292,9 +279,6 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       },
       validator: (value) {
-        /*if (value == null || value.isEmpty) {
-          return 'Per favore inserisci $label';
-        }*/
         return null;
       },
     );

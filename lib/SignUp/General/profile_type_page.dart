@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import '../Athlete/athlete_profile_page.dart';
 
 class ProfileType extends StatelessWidget {
+  const ProfileType({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.blueAccent,
       ),
@@ -21,7 +23,7 @@ class ProfileType extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => AthleteProfilePage(isBoth: false,)), // FIXME
                 );
               },
-              child: Text('Crea Profilo Atleta'),
+              child: const Text('Crea Profilo Atleta'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -29,7 +31,7 @@ class ProfileType extends StatelessWidget {
 
 
               },
-              child: Text('Crea Profilo Preparatore'),
+              child: const Text('Crea Profilo Preparatore'),
             ),
           ],
         ),

@@ -10,7 +10,7 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Colors.blueAccent,
-      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
@@ -18,7 +18,7 @@ final ThemeData darkTheme = ThemeData.light().copyWith(
       shadowColor: Colors.black45,
     ),
   ),
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     headline1: TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.blueAccent,

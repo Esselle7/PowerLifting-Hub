@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 class WorkoutPage extends StatefulWidget {
   final bool testMode;
 
-  WorkoutPage({required this.testMode});
+  const WorkoutPage({super.key, required this.testMode});
 
   @override
   _WorkoutPageState createState() => _WorkoutPageState();
@@ -101,11 +101,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
         future: _workoutData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Errore: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return Center(child: Text('Nessun dato disponibile'));
+            return const Center(child: Text('Nessun dato disponibile'));
           }
 
           final data = snapshot.data!;
@@ -125,7 +125,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 ),
                 color: getWeekColor(weekNumber, currentWeek),
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black, width: 1), // Aggiungi bordo
+                  side: const BorderSide(color: Colors.black, width: 1), // Aggiungi bordo
                   borderRadius: BorderRadius.circular(8), // Raggio di curvatura
                 ),
                 child: ListTile(

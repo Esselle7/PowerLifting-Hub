@@ -112,7 +112,7 @@ Future<bool> sendData(Map<String, dynamic> json, String district, String port, B
   while(await getToken() == null) {
     await authenticate(context);
   }
-  final headers;
+  final Map<String, String> headers;
   if(district == "login")
   {
     headers = {

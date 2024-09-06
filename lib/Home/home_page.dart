@@ -6,16 +6,18 @@ import 'profile_page.dart';
 import 'chat_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  static List<Widget> _pages = <Widget>[
+  static final List<Widget> _pages = <Widget>[
     CrewPage(),
     SearchPage(),
-    ChatbotPage(),
+    const ChatbotPage(),
     ProfilePage(testMode: true),
     ChatPage(),
   ];
