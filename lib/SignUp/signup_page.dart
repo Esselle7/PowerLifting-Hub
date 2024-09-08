@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Services/standardAppBar.dart';
 import 'package:gym/SignUp/role_profile_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
-import 'package:gym/Theme/responsive_text_styles.dart';
+import 'package:gym/Theme/responsive_text_box.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:gym/Theme/responsive_button_style.dart'; // Importa il file per i bottoni
@@ -23,13 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
-  final FocusNode _firstNameFocusNode = FocusNode();
-  final FocusNode _lastNameFocusNode = FocusNode();
-  final FocusNode _emailFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-  final FocusNode _confirmPasswordFocusNode = FocusNode();
-  final FocusNode _dobFocusNode = FocusNode();
-  final FocusNode _usernameFocusNode = FocusNode();
+  FocusNode _globalFocusNode = FocusNode();
 
   bool isMale = true;
   bool _passwordsMatch = true;
@@ -40,6 +35,11 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
     _confirmPasswordController.addListener(_checkPasswordsMatch);
     _passwordController.addListener(_checkPasswordsMatch);
+
+    // Rimuove il focus da tutti i campi di testo quando la pagina viene costruita
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    });
   }
 
   @override
@@ -51,15 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _confirmPasswordController.dispose();
     _dobController.dispose();
     _usernameController.dispose();
-
-    _firstNameFocusNode.dispose();
-    _lastNameFocusNode.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _confirmPasswordFocusNode.dispose();
-    _dobFocusNode.dispose();
-    _usernameFocusNode.dispose();
-
+    _globalFocusNode.dispose();
     super.dispose();
   }
 
@@ -70,27 +62,14 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  void _unfocusAllTextFields() {
-    _firstNameFocusNode.unfocus();
-    _lastNameFocusNode.unfocus();
-    _emailFocusNode.unfocus();
-    _passwordFocusNode.unfocus();
-    _confirmPasswordFocusNode.unfocus();
-    _dobFocusNode.unfocus();
-    _usernameFocusNode.unfocus();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
-      ),
+      appBar: StandardAppBar(title: "SignUp"),
       body: GestureDetector(
         onTap: () {
-          _unfocusAllTextFields();
+          // Quando si tocca fuori dai campi di testo, rimuove il focus
+          FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Container(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
@@ -116,23 +95,41 @@ class _SignUpPageState extends State<SignUpPage> {
                     Text(isMale ? 'M' : 'F', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: Colors.blueAccent)),
                   ],
                 ),
-                _buildTextField(_firstNameController, 'Nome', Icons.person, _firstNameFocusNode),
+                CustomTextField(
+                  labelText: 'Nome',
+                  icon: Icons.person,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildTextField(_lastNameController, 'Cognome', Icons.person, _lastNameFocusNode),
+                CustomTextField(
+                  labelText: 'Cognome',
+                  icon: Icons.person,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildDateField(_dobController, 'Data di Nascita', Icons.calendar_today, _dobFocusNode),
+                CustomDateField(
+                  controller: _dobController,
+                  labelText: 'Data di Nascita',
+                  icon: Icons.calendar_today,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildTextField(_emailController, 'Email', Icons.email, _emailFocusNode),
+                CustomTextField(
+                  labelText: 'Email',
+                  icon: Icons.email,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildTextField(_usernameController, 'Username', Icons.person_2_sharp, _usernameFocusNode),
+                CustomTextField(
+                  labelText: 'Username',
+                  icon: Icons.person_2_sharp,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildTextField(_passwordController, 'Password', Icons.lock, _passwordFocusNode, obscureText: true),
+                CustomPasswordTextField(
+                  labelText: 'Password',
+                  icon: Icons.lock,
+                  obscureText: true,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                _buildTextField(
-                  _confirmPasswordController,
-                  'Ripeti Password',
-                  Icons.lock,
-                  _confirmPasswordFocusNode,
+                CustomPasswordTextField(
+                  labelText: 'Ripeti Password',
+                  icon: Icons.lock,
                   obscureText: true,
                   errorText: _isPasswordEmpty ? null : (_passwordsMatch ? null : 'Le password non combaciano'),
                 ),
@@ -166,121 +163,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    IconData icon,
-    FocusNode focusNode, {
-    bool obscureText = false,
-    String? errorText,
-  }) {
-    return TextFormField(
-      controller: controller,
-      focusNode: focusNode,
-      style: ResponsiveTextStyles.labelMedium(context),
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        filled: true,
-        fillColor: Theme.of(context).primaryColor,
-        labelStyle: const TextStyle(color: Colors.blueAccent),
-        errorText: errorText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.blueAccent,
-            width: 2.0,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.blueAccent,
-            width: 3.0,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 2.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.red,
-            width: 2.0,
-          ),
-        ),
-      ),
-      obscureText: obscureText,
-      validator: (value) {
-        return null;
-      },
-    );
-  }
-
-  Widget _buildDateField(TextEditingController controller, String label, IconData icon, FocusNode focusNode) {
-    return TextFormField(
-      controller: controller,
-      focusNode: focusNode,
-      style: ResponsiveTextStyles.labelMedium(context),
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        filled: true,
-        fillColor: Theme.of(context).primaryColor,
-        labelStyle: const TextStyle(color: Colors.blueAccent),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.blueAccent,
-            width: 2.0,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.blueAccent,
-            width: 3.0,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 2.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.07),
-          borderSide: BorderSide(
-            color: Colors.red,
-            width: 2.0,
-          ),
-        ),
-      ),
-      readOnly: true,
-      onTap: () async {
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (pickedDate != null) {
-          setState(() {
-            controller.text = DateFormat('dd/MM/yyyy').format(pickedDate);
-          });
-        }
-      },
-      validator: (value) {
-        return null;
-      },
     );
   }
 }
