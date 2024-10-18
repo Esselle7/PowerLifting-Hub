@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Services/standardAppBar.dart';
 import 'package:gym/SignUp/Athlete/athlete_profile_page.dart';
 import 'package:gym/SignUp/General/profile_world_crew_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:gym/Theme/responsive_button_style.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:provider/provider.dart';
 
 class CoachProfileSkillsPage extends StatefulWidget {
@@ -37,7 +40,7 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(skill, style: const TextStyle(fontSize: 16)),
+        Text(skill, style: ResponsiveTextStyles.labelSmall(context)),
         Row(
           children: List.generate(5, (index) {
             return IconButton(
@@ -58,11 +61,7 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Insert yout Skills'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
-      ),
+      appBar: StandardAppBar(title: "Completa le skills"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -76,9 +75,11 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
               }),
               const SizedBox(height: 20),
               Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Provider.of<UserProfile>(context, listen: false).updateCoachSkills(_skills);
+                child: 
+                
+                ResponsiveButtonStyle.mediumButton(context: context, buttonText: "Prosegui", icon: Icons.navigate_next,
+                onPressed: () {
+                  Provider.of<UserProfile>(context, listen: false).updateCoachSkills(_skills);
                     if(widget.isBoth == true){
                        Navigator.push(
                       context,
@@ -96,9 +97,11 @@ class _CoachProfileSkillsPageState extends State<CoachProfileSkillsPage> {
                     );
                   }
                     
-                  },
-                  child: const Text('Continua'),
-                ),
+                  
+                  
+                },)
+                
+               
               ),
               const SizedBox(height: 20),
             ],

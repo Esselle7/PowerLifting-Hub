@@ -80,7 +80,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Sesso: ', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: Colors.blueAccent)),
                     Switch(
                       value: isMale,
                       onChanged: (value) {
@@ -92,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       inactiveThumbColor: Colors.pink,
                       inactiveTrackColor: Colors.pink.shade100,
                     ),
-                    Text(isMale ? 'M' : 'F', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: Colors.blueAccent)),
+                    Text(isMale ? 'M' : 'F', style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045, color: isMale ? Colors.blueAccent: Colors.pink)),
                   ],
                 ),
                 CustomTextField(
@@ -105,6 +104,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   icon: Icons.person,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                CustomTextField(
+                  labelText: 'Username',
+                  icon: Icons.person_2_sharp,
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 CustomDateField(
                   controller: _dobController,
                   labelText: 'Data di Nascita',
@@ -114,11 +118,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 CustomTextField(
                   labelText: 'Email',
                   icon: Icons.email,
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                CustomTextField(
-                  labelText: 'Username',
-                  icon: Icons.person_2_sharp,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 CustomPasswordTextField(

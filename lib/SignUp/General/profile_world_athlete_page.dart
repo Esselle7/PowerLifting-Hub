@@ -3,38 +3,35 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym/Home/home_page.dart';
 import 'package:gym/Services/network_services.dart';
+import 'package:gym/Services/standardAppBar.dart';
 import 'package:gym/SignUp/General/profile_world_coach_page.dart';
-import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:gym/Theme/responsive_button_style.dart';
+import 'package:gym/Theme/responsive_text_box.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:provider/provider.dart';
+import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
+import 'package:gym/SignUp/General/profile_world_federation_page.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 
-// Modello per i dati degli atleti
-class Athlete {
-  final String name;
-  final String province;
-  final String nation;
-
-  Athlete({required this.name, required this.province, required this.nation});
-}
-
-// Lista di test per i top 5 atleti della provincia e della nazione
-final List<Athlete> provinceTopAthletes = [
-  Athlete(name: 'Athlete A', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete B', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete C', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete D', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete E', province: 'Provincia', nation: 'Nazione'),
+// Lista di test per le top 5 athlete della provincia e della nazione in formato JSON
+final List<Map<String, String>> provinceTopAthletes = [
+  {"name": "Athlete A", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete B", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete C", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete D", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete E", "province": "Provincia", "nation": "Nazione"},
 ];
 
-final List<Athlete> nationTopAthletes = [
-  Athlete(name: 'Athlete X', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete Y', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete Z', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete W', province: 'Provincia', nation: 'Nazione'),
-  Athlete(name: 'Athlete V', province: 'Provincia', nation: 'Nazione'),
+final List<Map<String, String>> nationTopAthletes = [
+  {"name": "Athlete X", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete Y", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete Z", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete W", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Athlete V", "province": "Provincia", "nation": "Nazione"},
 ];
 
-// Simula la chiamata API per ottenere i top 5 atleti
-Future<List<Athlete>> fetchTopAthletes(String type, {required bool testMode}) async {
+// Simula la chiamata API per ottenere le top 5 athlete
+Future<List<Map<String, String>>> fetchTopAthletes(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
       return Future.delayed(const Duration(seconds: 1), () => provinceTopAthletes);
@@ -42,42 +39,22 @@ Future<List<Athlete>> fetchTopAthletes(String type, {required bool testMode}) as
       return Future.delayed(const Duration(seconds: 1), () => nationTopAthletes);
     }
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
   return [];
 }
 
-// Simula la chiamata API per ottenere gli atleti
-Future<List<Athlete>> fetchAthletes({required bool testMode}) async {
+// Simula la chiamata API per ottenere le athlete
+Future<List<Map<String, String>>> fetchAthletes({required bool testMode}) async {
   if (testMode) {
-    // Lista di atleti di test
     return List.generate(
       30,
-      (index) => Athlete(name: 'TestAthlete $index', province: 'Provincia', nation: 'Nazione'),
+      (index) => {"name": "TestAthlete $index", "province": "Provincia", "nation": "Nazione"},
     );
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
 }
-
-// Modello per i dati delle persone
-class Person {
-  final String name;
-  final Color color;
-
-  Person({required this.name, required this.color});
-}
-
-// Esempio di dati per i cerchietti
-final List<Person> persons = List.generate(
-  30,
-  (index) => Person(
-    name: 'Nome $index',
-    color: Colors.primaries[index % Colors.primaries.length],
-  ),
-);
 
 class ProfileWorldAthletePage extends StatefulWidget {
   final bool testMode;
@@ -89,13 +66,13 @@ class ProfileWorldAthletePage extends StatefulWidget {
 }
 
 class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
-  final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
+  final FocusNode _focusNode = FocusNode();
 
-  late Future<List<Athlete>> _provinceTopAthletesFuture;
-  late Future<List<Athlete>> _nationTopAthletesFuture;
+  late Future<List<Map<String, String>>> _provinceTopAthletesFuture;
+  late Future<List<Map<String, String>>> _nationTopAthletesFuture;
 
-  final Set<String> _selectedAthletes = {}; // Stato per tenere traccia degli atleti selezionati
-  List<Athlete> _filteredAthletes = []; // Lista degli atleti filtrati in base alla ricerca
+  final Set<String> _selectedAthletes = {};
+  List<Map<String, String>> _filteredAthletes = [];
   String _searchQuery = '';
   final NetworkService networkService = NetworkService();
 
@@ -104,7 +81,7 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
     super.initState();
     _provinceTopAthletesFuture = fetchTopAthletes('province', testMode: widget.testMode);
     _nationTopAthletesFuture = fetchTopAthletes('nation', testMode: widget.testMode);
-    _fetchAthletes(); // Ottiene gli atleti iniziali
+    _fetchAthletes();
   }
 
   Future<void> _fetchAthletes() async {
@@ -117,10 +94,7 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
   void _updateSearchQuery(String query) {
     setState(() {
       _searchQuery = query;
-      _filteredAthletes = persons
-          .where((person) => person.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
-          .map((person) => Athlete(name: person.name, province: '', nation: ''))
-          .toList();
+      _filteredAthletes = _filteredAthletes.where((athlete) => athlete['name']!.toLowerCase().startsWith(_searchQuery.toLowerCase())).toList();
     });
   }
 
@@ -134,7 +108,7 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
     });
   }
 
-  void _showBottomSheet(String title, Future<List<Athlete>> athleteFuture) {
+  void _showBottomSheet(String title, Future<List<Map<String, String>>> athleteFuture) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -154,23 +128,23 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: ResponsiveTextStyles.labelLarge(context),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Expanded(
-                      child: FutureBuilder<List<Athlete>>(
+                      child: FutureBuilder<List<Map<String, String>>>(
                         future: athleteFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Errore: ${snapshot.error}', style: const TextStyle(color: Colors.blueAccent)));
+                            return Center(child: Text('Errore: ${snapshot.error}', style: TextStyle(color: Colors.blueAccent)));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                             return const Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
                           } else {
@@ -180,13 +154,13 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                               itemBuilder: (context, index) {
                                 final athlete = snapshot.data![index];
                                 return ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+                                  contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.blue, // Colore fittizio per i cerchietti degli atleti
-                                    child: Text(athlete.name[0], style: const TextStyle(color: Colors.blueAccent)),
+                                    backgroundColor: Colors.blue,
+                                    child: Text(athlete['name']![0], style: ResponsiveTextStyles.labelMedium(context)),
                                   ),
-                                  title: Text(athlete.name, style: const TextStyle(color: Colors.blueAccent)),
-                                  subtitle: Text('${athlete.province}, ${athlete.nation}', style: const TextStyle(color: Colors.blueAccent)),
+                                  title: Text(athlete['name']!, style: ResponsiveTextStyles.labelMedium(context)),
+                                  subtitle: Text('${athlete['province']}, ${athlete['nation']}', style: ResponsiveTextStyles.labelSmall(context)),
                                 );
                               },
                             );
@@ -202,62 +176,46 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
         );
       },
     ).whenComplete(() {
-          _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
-        });
+      _focusNode.unfocus();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String nextStep = "";
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus(); // Nasconde la tastiera se clicchi altrove
+        FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Cerca Atleti'),
-          backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
-        ),
+        appBar: StandardAppBar(title: "Cerca Athletes"),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Column(
             children: [
-              // Campo di ricerca
-              TextField(
-                focusNode: _focusNode,
-                onChanged: _updateSearchQuery,
-                decoration: const InputDecoration(
-                  labelText: 'Digita il nome del tuo atleta',
-                  labelStyle: TextStyle(color: Colors.blueAccent),
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              // Sezione per gli atleti filtrati
+              CustomTextField(labelText: "Inserisci nome athlete", icon: Icons.search, onChanged: _updateSearchQuery),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               Expanded(
                 child: _searchQuery.isNotEmpty
                     ? _filteredAthletes.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
-                              'Nessun atleta trovato',
-                              style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                              'Nessuna athlete trovata',
+                              style: ResponsiveTextStyles.labelMedium(context),
                             ),
                           )
                         : GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4, // Numero fisso di colonne
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width > 350 ? 4 : 3,
+                              crossAxisSpacing: MediaQuery.of(context).size.width * 0.02,
+                              mainAxisSpacing: MediaQuery.of(context).size.width * 0.02,
                               childAspectRatio: 1,
                             ),
-                            itemCount: _filteredAthletes.length > 16 ? 16 : _filteredAthletes.length,
+                            itemCount: _filteredAthletes.length,
                             itemBuilder: (context, index) {
                               final athlete = _filteredAthletes[index];
-                              final isSelected = _selectedAthletes.contains(athlete.name);
+                              final isSelected = _selectedAthletes.contains(athlete['name']);
                               return GestureDetector(
-                                onTap: () => _toggleSelection(athlete.name),
+                                onTap: () => _toggleSelection(athlete['name']!),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -265,8 +223,8 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                                       alignment: Alignment.bottomLeft,
                                       children: [
                                         Container(
-                                          width: 40,
-                                          height: 40,
+                                          width: MediaQuery.of(context).size.width * 0.1,
+                                          height: MediaQuery.of(context).size.width * 0.1,
                                           decoration: BoxDecoration(
                                             color: isSelected ? Colors.green : Colors.blue,
                                             shape: BoxShape.circle,
@@ -277,21 +235,21 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                                           ),
                                         ),
                                         if (isSelected)
-                                          const Positioned(
+                                          Positioned(
                                             bottom: 0,
                                             left: 0,
                                             child: Icon(
                                               Icons.check_circle,
-                                              size: 20,
+                                              size: MediaQuery.of(context).size.width * 0.07,
                                               color: Colors.blueAccent,
                                             ),
                                           ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                     Text(
-                                      athlete.name,
-                                      style: const TextStyle(color: Colors.blueAccent),
+                                      athlete['name']!,
+                                      style: ResponsiveTextStyles.labelSmall(context),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -301,121 +259,87 @@ class _ProfileWorldAthletePageState extends State<ProfileWorldAthletePage> {
                           )
                     : const SizedBox.shrink(),
               ),
-              const SizedBox(height: 20),
-              // Pulsante per Top 5 Atleti della Provincia
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () => _showBottomSheet('Top 5 Atleti della Provincia', _provinceTopAthletesFuture),
-                child: const Text(
-                  'Top 5 Atleti della Provincia',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              // Pulsante per Top 5 Athlete della Provincia
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Athlete della Provincia',
+                onPressed: () => _showBottomSheet('Top 5 Athlete della Provincia', _provinceTopAthletesFuture),
+                icon: Icons.star,
               ),
-              const SizedBox(height: 20),
-              // Pulsante per Top 5 Atleti della Nazione
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () => _showBottomSheet('Top 5 Atleti della Nazione', _nationTopAthletesFuture),
-                child: const Text(
-                  'Top 5 Atleti della Nazione',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+              // Pulsante per Top 5 Athlete della Nazione
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Athlete della Nazione',
+                onPressed: () => _showBottomSheet('Top 5 Athlete della Nazione', _nationTopAthletesFuture),
+                icon: Icons.flag,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per il passo successivo
-              ElevatedButton(
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
                 onPressed: () {
                   final userProfile = Provider.of<UserProfile>(context, listen: false);
                   userProfile.updateWorldAthletes(athletes: _selectedAthletes.toList());
-                  if(userProfile.isBoth){
-                    nextStep = "Next Step";
+                  if (userProfile.isBoth) {
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileWorldCoachPage(testMode: true),
-                    ),
-                  );
-                  } else{
-                    nextStep = "Save";
-
-                    Map<String, dynamic> profile;
-                     profile = {
-        'utente': {
-          'nome': userProfile.firstName,
-          'cognome': userProfile.lastName,
-          'username': userProfile.username,
-          'dob': userProfile.dob.toIso8601String(),
-          'password': userProfile.password,
-          'mail': userProfile.email,
-          'sesso': userProfile.isMale,
-          'crews': userProfile.crews,
-        },
-        'trainer': {
-          'skillSpecifiche': userProfile.coachSkills,
-          'titoli': userProfile.educationTitles,
-          'atleti': userProfile.athletes, 
-        },
-        'massimali': [
-          {
-            'alzata': "SQUAT",
-            'data': userProfile.squatDate.toIso8601String(),
-            'peso': userProfile.squat,
-          },
-          {
-            'alzata': "PANCA_PIANA",
-            'data': userProfile.bpDate.toIso8601String(),
-            'peso': userProfile.benchPress,
-          },
-          {
-            'alzata': "STACCO_DA_TERRA",
-            'data': userProfile.dlDate.toIso8601String(),
-            'peso': userProfile.deadlift,
-          }
-          //elimina dips
-        ]
-      };            
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileWorldCoachPage(testMode: true),
+                      ),
+                    );
+                  } else {
+                    Map<String, dynamic> profile = {
+                      'utente': {
+                        'nome': userProfile.firstName,
+                        'cognome': userProfile.lastName,
+                        'username': userProfile.username,
+                        'dob': userProfile.dob.toIso8601String(),
+                        'password': userProfile.password,
+                        'mail': userProfile.email,
+                        'sesso': userProfile.isMale,
+                        'athletes': userProfile.athletes,
+                      },
+                      'trainer': {
+                        'skillSpecifiche': userProfile.coachSkills,
+                        'titoli': userProfile.educationTitles,
+                        'atleti': userProfile.athletes,
+                      },
+                      'massimali': [
+                        {
+                          'alzata': "SQUAT",
+                          'data': userProfile.squatDate.toIso8601String(),
+                          'peso': userProfile.squat,
+                        },
+                        {
+                          'alzata': "PANCA_PIANA",
+                          'data': userProfile.bpDate.toIso8601String(),
+                          'peso': userProfile.benchPress,
+                        },
+                        {
+                          'alzata': "STACCO_DA_TERRA",
+                          'data': userProfile.dlDate.toIso8601String(),
+                          'peso': userProfile.deadlift,
+                        }
+                      ]
+                    };
                     String profileJson = jsonEncode(profile);
                     print(profileJson);
-                    if(!widget.testMode){
+                    if (!widget.testMode) {
                       networkService.sendData(profile, "registrazione", "8080", context);
                     }
                     userProfile.reset();
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
                   }
-                  
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).mainColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 5,
-                  shadowColor: Colors.black45,
-                ),
-                child: Text(
-                  nextStep,
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
+                buttonText: 'Prosegui',
+                icon: Icons.navigate_next,
               ),
             ],
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ResponsiveTextStyles {
-  static TextStyle labelSmall(BuildContext context, [Color? newColor]) {
+  static TextStyle miniLabel(BuildContext context, [Color? newColor]) {
     final width = MediaQuery.of(context).size.width;
     if(newColor == null){
       return TextStyle(
@@ -15,6 +15,25 @@ class ResponsiveTextStyles {
       color: newColor,
     );
     }
+  }
+
+  static TextStyle labelSmall(BuildContext context, [Color? newColor]) {
+    final width = MediaQuery.of(context).size.width;
+    if(newColor == null){
+      return TextStyle(
+      fontSize: width * 0.04,
+      fontWeight: FontWeight.bold,
+      color: Theme.of(context).primaryColor == Colors.white ? Colors.black : Colors.white,
+    );
+    }
+    else{
+      return TextStyle(
+      fontSize: width * 0.04,
+      fontWeight: FontWeight.bold,
+      color: newColor,
+    );
+    }
+    
   }
 
   static TextStyle labelMedium(BuildContext context, [Color? newColor]) {

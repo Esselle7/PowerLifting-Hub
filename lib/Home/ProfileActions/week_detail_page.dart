@@ -78,7 +78,7 @@ class WeekDetailPage extends StatelessWidget {
                                           SizedBox(width: screenWidth * 0.02),
                                           Text(
                                             'Serie: ${exercise['sets']}',
-                                            style: ResponsiveTextStyles.labelSmall(context),
+                                            style: ResponsiveTextStyles.miniLabel(context),
                                           ),
                                         ],
                                       ),
@@ -88,7 +88,7 @@ class WeekDetailPage extends StatelessWidget {
                                           SizedBox(width: screenWidth * 0.02),
                                           Text(
                                             'Ripetizioni: ${exercise['reps']}',
-                                            style: ResponsiveTextStyles.labelSmall(context),
+                                            style: ResponsiveTextStyles.miniLabel(context),
                                           ),
                                         ],
                                       ),
@@ -97,11 +97,11 @@ class WeekDetailPage extends StatelessWidget {
                                   SizedBox(height: screenHeight * 0.01),
                                   Text(
                                     'Note:',
-                                    style: ResponsiveTextStyles.labelSmall(context),
+                                    style: ResponsiveTextStyles.miniLabel(context),
                                   ),
                                   Text(
                                     exercise['notes'],
-                                    style: ResponsiveTextStyles.labelSmall(context),
+                                    style: ResponsiveTextStyles.miniLabel(context),
                                   ),
                                 ],
                               ),

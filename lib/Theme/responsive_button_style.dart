@@ -13,7 +13,7 @@ class ResponsiveButtonStyle {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
+        backgroundColor:  Theme.of(context).primaryColor,
         side: BorderSide(color: Colors.blueAccent, width: screenWidth * 0.005),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(screenWidth * 0.03),
@@ -54,7 +54,7 @@ class ResponsiveButtonStyle {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).primaryColor,
         side: BorderSide(color: Colors.blueAccent, width: screenWidth * 0.005),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(screenWidth * 0.04),
@@ -95,7 +95,7 @@ class ResponsiveButtonStyle {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent,
+        backgroundColor:  Theme.of(context).primaryColor,
         side: BorderSide(color: Colors.blueAccent, width: screenWidth * 0.007),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(screenWidth * 0.05),

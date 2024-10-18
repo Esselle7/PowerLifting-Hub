@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 
 class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title; // Campo per il titolo
-
+  final String title;
   const StandardAppBar({super.key, 
-    required this.title, // Costruttore che accetta il titolo
+    required this.title,
   });
 
   @override
@@ -16,11 +16,7 @@ class StandardAppBar extends StatelessWidget implements PreferredSizeWidget {
           foregroundColor: Colors.blueAccent,
           title: Text(
             title, // Usa il titolo passato come parametro
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-              fontSize: 25,
-            ),
+            style: ResponsiveTextStyles.headlineLarge(context),
           ),
           elevation: 0, // Rimuove l'ombra
           leading: IconButton(

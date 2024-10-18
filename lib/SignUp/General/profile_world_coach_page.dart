@@ -3,80 +3,57 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym/Home/home_page.dart';
 import 'package:gym/Services/network_services.dart';
-import 'package:gym/SignUp/user_profile_state.dart';
+import 'package:gym/Services/standardAppBar.dart';
+import 'package:gym/Theme/responsive_button_style.dart';
+import 'package:gym/Theme/responsive_text_box.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:provider/provider.dart';
+import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
+import 'package:gym/SignUp/General/profile_world_federation_page.dart';
+import 'package:gym/SignUp/user_profile_state.dart';
 
-// Modello per i dati dei coach
-class Coach {
-  final String name;
-  final String province;
-  final String nation;
-
-  Coach({required this.name, required this.province, required this.nation});
-}
-
-// Lista di test per i top 5 coach della provincia e della nazione
-final List<Coach> provinceTopCoaches = [
-  Coach(name: 'Coach A', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach B', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach C', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach D', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach E', province: 'Provincia', nation: 'Nazione'),
+// Lista di test per le top 5 Coach della provincia e della nazione in formato JSON
+final List<Map<String, String>> provinceTopCoachs = [
+  {"name": "Coach A", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach B", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach C", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach D", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach E", "province": "Provincia", "nation": "Nazione"},
 ];
 
-final List<Coach> nationTopCoaches = [
-  Coach(name: 'Coach X', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach Y', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach Z', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach W', province: 'Provincia', nation: 'Nazione'),
-  Coach(name: 'Coach V', province: 'Provincia', nation: 'Nazione'),
+final List<Map<String, String>> nationTopCoachs = [
+  {"name": "Coach X", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach Y", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach Z", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach W", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Coach V", "province": "Provincia", "nation": "Nazione"},
 ];
 
-// Simula la chiamata API per ottenere i top 5 coach
-Future<List<Coach>> fetchTopCoaches(String type, {required bool testMode}) async {
+// Simula la chiamata API per ottenere le top 5 Coach
+Future<List<Map<String, String>>> fetchTopCoachs(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
-      return Future.delayed(const Duration(seconds: 1), () => provinceTopCoaches);
+      return Future.delayed(const Duration(seconds: 1), () => provinceTopCoachs);
     } else if (type == 'nation') {
-      return Future.delayed(const Duration(seconds: 1), () => nationTopCoaches);
+      return Future.delayed(const Duration(seconds: 1), () => nationTopCoachs);
     }
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
   return [];
 }
 
-// Simula la chiamata API per ottenere i coach
-Future<List<Coach>> fetchCoaches({required bool testMode}) async {
+// Simula la chiamata API per ottenere le Coach
+Future<List<Map<String, String>>> fetchCoachs({required bool testMode}) async {
   if (testMode) {
-    // Lista di coach di test
     return List.generate(
       30,
-      (index) => Coach(name: 'TestCoach $index', province: 'Provincia', nation: 'Nazione'),
+      (index) => {"name": "TestCoach $index", "province": "Provincia", "nation": "Nazione"},
     );
   } else {
-    // Inserisci la logica della chiamata API per ottenere i dati reali
     throw UnimplementedError('API call is not implemented.');
   }
 }
-
-// Modello per i dati delle persone
-class Person {
-  final String name;
-  final Color color;
-
-  Person({required this.name, required this.color});
-}
-
-// Esempio di dati per i cerchietti
-final List<Person> persons = List.generate(
-  30,
-  (index) => Person(
-    name: 'Nome $index',
-    color: Colors.primaries[index % Colors.primaries.length],
-  ),
-);
 
 class ProfileWorldCoachPage extends StatefulWidget {
   final bool testMode;
@@ -88,52 +65,49 @@ class ProfileWorldCoachPage extends StatefulWidget {
 }
 
 class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
-  final FocusNode _focusNode = FocusNode(); // FocusNode per il TextField
+  final FocusNode _focusNode = FocusNode();
 
-  late Future<List<Coach>> _provinceTopCoachesFuture;
-  late Future<List<Coach>> _nationTopCoachesFuture;
+  late Future<List<Map<String, String>>> _provinceTopCoachsFuture;
+  late Future<List<Map<String, String>>> _nationTopCoachsFuture;
 
-  final Set<String> _selectedCoaches = {}; // Stato per tenere traccia dei coach selezionati
-  List<Coach> _filteredCoaches = []; // Lista dei coach filtrati in base alla ricerca
+  final Set<String> _selectedCoaches = {};
+  List<Map<String, String>> _filteredCoachs = [];
   String _searchQuery = '';
-  final NetworkService networkService = NetworkService();
+   final NetworkService networkService = NetworkService();
 
   @override
   void initState() {
     super.initState();
-    _provinceTopCoachesFuture = fetchTopCoaches('province', testMode: widget.testMode);
-    _nationTopCoachesFuture = fetchTopCoaches('nation', testMode: widget.testMode);
-    _fetchCoaches(); // Ottiene i coach iniziali
+    _provinceTopCoachsFuture = fetchTopCoachs('province', testMode: widget.testMode);
+    _nationTopCoachsFuture = fetchTopCoachs('nation', testMode: widget.testMode);
+    _fetchCoachs();
   }
 
-  Future<void> _fetchCoaches() async {
-    final coaches = await fetchCoaches(testMode: widget.testMode);
+  Future<void> _fetchCoachs() async {
+    final Coachs = await fetchCoachs(testMode: widget.testMode);
     setState(() {
-      _filteredCoaches = coaches;
+      _filteredCoachs = Coachs;
     });
   }
 
   void _updateSearchQuery(String query) {
     setState(() {
       _searchQuery = query;
-      _filteredCoaches = persons
-          .where((person) => person.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
-          .map((person) => Coach(name: person.name, province: '', nation: ''))
-          .toList();
+      _filteredCoachs = _filteredCoachs.where((Coach) => Coach['name']!.toLowerCase().startsWith(_searchQuery.toLowerCase())).toList();
     });
   }
 
-  void _toggleSelection(String coachName) {
+  void _toggleSelection(String CoachName) {
     setState(() {
-      if (_selectedCoaches.contains(coachName)) {
-        _selectedCoaches.remove(coachName);
+      if (_selectedCoaches.contains(CoachName)) {
+        _selectedCoaches.remove(CoachName);
       } else {
-        _selectedCoaches.add(coachName);
+        _selectedCoaches.add(CoachName);
       }
     });
   }
 
-  void _showBottomSheet(String title, Future<List<Coach>> coachFuture) {
+  void _showBottomSheet(String title, Future<List<Map<String, String>>> CoachFuture) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -153,23 +127,23 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: ResponsiveTextStyles.labelLarge(context),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Expanded(
-                      child: FutureBuilder<List<Coach>>(
-                        future: coachFuture,
+                      child: FutureBuilder<List<Map<String, String>>>(
+                        future: CoachFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Errore: ${snapshot.error}', style: const TextStyle(color: Colors.blueAccent)));
+                            return Center(child: Text('Errore: ${snapshot.error}', style: TextStyle(color: Colors.blueAccent)));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                             return const Center(child: Text('Nessun dato trovato.', style: TextStyle(color: Colors.blueAccent)));
                           } else {
@@ -177,15 +151,15 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                               controller: scrollController,
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
-                                final coach = snapshot.data![index];
+                                final Coach = snapshot.data![index];
                                 return ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+                                  contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.blue, // Colore fittizio per i cerchietti dei coach
-                                    child: Text(coach.name[0], style: const TextStyle(color: Colors.blueAccent)),
+                                    backgroundColor: Colors.blue,
+                                    child: Text(Coach['name']![0], style: ResponsiveTextStyles.labelMedium(context)),
                                   ),
-                                  title: Text(coach.name, style: const TextStyle(color: Colors.blueAccent)),
-                                  subtitle: Text('${coach.province}, ${coach.nation}', style: const TextStyle(color: Colors.blueAccent)),
+                                  title: Text(Coach['name']!, style: ResponsiveTextStyles.labelMedium(context)),
+                                  subtitle: Text('${Coach['province']}, ${Coach['nation']}', style: ResponsiveTextStyles.labelSmall(context)),
                                 );
                               },
                             );
@@ -201,61 +175,46 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
         );
       },
     ).whenComplete(() {
-          _focusNode.unfocus(); // Assicurati che il focus sia rimosso anche quando il BottomSheet è chiuso
-        });
+      _focusNode.unfocus();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).unfocus(); // Nasconde la tastiera se clicchi altrove
+        FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Cerca Coach'),
-          backgroundColor: Colors.transparent,
-        foregroundColor: Colors.blueAccent,
-        ),
+        appBar: StandardAppBar(title: "Cerca Coachs"),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Column(
             children: [
-              // Campo di ricerca
-              TextField(
-                focusNode: _focusNode,
-                onChanged: _updateSearchQuery,
-                decoration: const InputDecoration(
-                  labelText: 'Digita il nome del tuo coach',
-                  labelStyle: TextStyle(color: Colors.blueAccent),
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              // Sezione per i coach filtrati
+              CustomTextField(labelText: "Inserisci nome Coach", icon: Icons.search, onChanged: _updateSearchQuery),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               Expanded(
                 child: _searchQuery.isNotEmpty
-                    ? _filteredCoaches.isEmpty
-                        ? const Center(
+                    ? _filteredCoachs.isEmpty
+                        ? Center(
                             child: Text(
-                              'Nessun coach trovato',
-                              style: TextStyle(fontSize: 18, color: Colors.blueAccent),
+                              'Nessuna Coach trovata',
+                              style: ResponsiveTextStyles.labelMedium(context),
                             ),
                           )
                         : GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4, // Numero fisso di colonne
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: MediaQuery.of(context).size.width > 350 ? 4 : 3,
+                              crossAxisSpacing: MediaQuery.of(context).size.width * 0.02,
+                              mainAxisSpacing: MediaQuery.of(context).size.width * 0.02,
                               childAspectRatio: 1,
                             ),
-                            itemCount: _filteredCoaches.length > 16 ? 16 : _filteredCoaches.length,
+                            itemCount: _filteredCoachs.length,
                             itemBuilder: (context, index) {
-                              final coach = _filteredCoaches[index];
-                              final isSelected = _selectedCoaches.contains(coach.name);
+                              final Coach = _filteredCoachs[index];
+                              final isSelected = _selectedCoaches.contains(Coach['name']);
                               return GestureDetector(
-                                onTap: () => _toggleSelection(coach.name),
+                                onTap: () => _toggleSelection(Coach['name']!),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -263,8 +222,8 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                                       alignment: Alignment.bottomLeft,
                                       children: [
                                         Container(
-                                          width: 40,
-                                          height: 40,
+                                          width: MediaQuery.of(context).size.width * 0.1,
+                                          height: MediaQuery.of(context).size.width * 0.1,
                                           decoration: BoxDecoration(
                                             color: isSelected ? Colors.green : Colors.blue,
                                             shape: BoxShape.circle,
@@ -275,21 +234,21 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                                           ),
                                         ),
                                         if (isSelected)
-                                          const Positioned(
+                                          Positioned(
                                             bottom: 0,
                                             left: 0,
                                             child: Icon(
                                               Icons.check_circle,
-                                              size: 20,
+                                              size: MediaQuery.of(context).size.width * 0.07,
                                               color: Colors.blueAccent,
                                             ),
                                           ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                     Text(
-                                      coach.name,
-                                      style: const TextStyle(color: Colors.blueAccent),
+                                      Coach['name']!,
+                                      style: ResponsiveTextStyles.labelSmall(context),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -299,49 +258,43 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
                           )
                     : const SizedBox.shrink(),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per Top 5 Coach della Provincia
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () => _showBottomSheet('Top 5 Coach della Provincia', _provinceTopCoachesFuture),
-                child: const Text(
-                  'Top 5 Coach della Provincia',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Coach della Provincia',
+                onPressed: () => _showBottomSheet('Top 5 Coach della Provincia', _provinceTopCoachsFuture),
+                icon: Icons.star,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per Top 5 Coach della Nazione
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 5,
-                ),
-                onPressed: () => _showBottomSheet('Top 5 Coach della Nazione', _nationTopCoachesFuture),
-                child: const Text(
-                  'Top 5 Coach della Nazione',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+              ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Top 5 Coach della Nazione',
+                onPressed: () => _showBottomSheet('Top 5 Coach della Nazione', _nationTopCoachsFuture),
+                icon: Icons.flag,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               // Pulsante per il passo successivo
-              ElevatedButton(
-                onPressed: () {
-                  final userProfile = Provider.of<UserProfile>(context, listen: false);
-                  userProfile.updateWorldCoaches(coaches: _selectedCoaches.toList());
-                  Map<String, dynamic> profile;
-                  if(userProfile.isBoth){
-                    profile = {
+                ResponsiveButtonStyle.mediumButton(
+                context: context,
+                buttonText: 'Save',
+                onPressed: _saveProfile,
+                icon: Icons.navigate_next,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _saveProfile() {
+    final userProfile = Provider.of<UserProfile>(context, listen: false);
+    userProfile.updateWorldCoaches(coaches: _selectedCoaches.toList());
+    Map<String, dynamic> profile;
+    if (userProfile.isBoth) {
+      profile = {
         'utente': {
           'nome': userProfile.firstName,
           'cognome': userProfile.lastName,
@@ -355,8 +308,6 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
         'atleta': {
           'federazione': userProfile.federation,
           'tipologia': userProfile.category,
-          //'tipologia': "POWERLIFTER",
-          
           'trainer': userProfile.coaches,
           'weightClass': userProfile.weightClass,
         },
@@ -376,12 +327,10 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
             'data': userProfile.dlDate.toIso8601String(),
             'peso': userProfile.deadlift,
           }
-          //elimina dips
         ]
       };
-                  }
-                  else{
-                     profile = {
+    } else {
+      profile = {
         'utente': {
           'nome': userProfile.firstName,
           'cognome': userProfile.lastName,
@@ -394,9 +343,7 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
         },
         'atleta': {
           'federazione': userProfile.federation,
-          'tipologia': userProfile.category, // fixme
-          //'tipologia': "POWERLIFTER",
-          
+          'tipologia': userProfile.category,
           'trainers': userProfile.coaches,
           'weightClass': userProfile.weightClass,
         },
@@ -421,40 +368,19 @@ class _ProfileWorldCoachPageState extends State<ProfileWorldCoachPage> {
             'data': userProfile.dlDate.toIso8601String(),
             'peso': userProfile.deadlift,
           }
-          //elimina dips
         ]
       };
-                  }
-                  String profileJson = jsonEncode(profile);
-                    print(profileJson);
-                    if(!widget.testMode){
-                      networkService.sendData(profile, "registrazione", "8080",context);
-                    }
-                    userProfile.reset();
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).mainColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 5,
-                  shadowColor: Colors.black45,
-                ),
-                child: Text(
-                  'Save',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
+    }
+    String profileJson = jsonEncode(profile);
+    print(profileJson);
+    if (!widget.testMode) {
+      networkService.sendData(profile, "registrazione", "8080", context);
+    }
+    userProfile.reset();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
       ),
     );
   }

@@ -83,7 +83,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
           Expanded(
             child: Text(
               label,
-              style: ResponsiveTextStyles.labelMedium(context),
+              style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent),
             ),
           ),
           SizedBox(
@@ -110,8 +110,9 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                 labelText: 'Inserisci',
                 labelStyle: TextStyle(color: valueFocusNode.hasFocus ? Colors.blueAccent : Colors.grey),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                suffixStyle: TextStyle(color: Colors.blueAccent),
+                suffixStyle: TextStyle(color: Theme.of(context).primaryColor),
               ),
+              style: ResponsiveTextStyles.labelMedium(context),
               onChanged: (text) {
                 final double? newValue = double.tryParse(text);
                 if (newValue != null) onChanged(newValue);
@@ -144,6 +145,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
               ),
               readOnly: true,
+              style:  ResponsiveTextStyles.labelMedium(context),
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
@@ -176,17 +178,28 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Crea Profilo Atleta'),
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.blueAccent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              userProfile.reset();
-              Navigator.of(context).pop();
-            },
+  title: Text(
+            "Crea Profilo Atleta",
+            style: ResponsiveTextStyles.headlineLarge(context),
           ),
-        ),
+  backgroundColor: Colors.transparent,
+  foregroundColor: Colors.blueAccent,
+  leading: IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () async {
+      userProfile.reset();
+      Navigator.of(context).pop();
+    },
+  ),
+  bottom: PreferredSize(
+    preferredSize: Size.fromHeight(1.0), // Altezza della linea di divisione
+    child: Container(
+      color: const Color.fromARGB(255, 60, 60, 60), // Colore della linea di divisione
+      height: 1.0, // Altezza della linea di divisione
+    ),
+  ),
+),
+
         body: Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
           child: SingleChildScrollView(
@@ -232,11 +245,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                 Center(
                   child: Text(
                     userProfile.category,
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).textScaleFactor * 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
-                    ),
+                    style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent)
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
@@ -244,7 +253,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Categoria Peso',
-                        style: ResponsiveTextStyles.labelMedium(context)),
+                        style: ResponsiveTextStyles.labelMedium(context, Colors.blueAccent)),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
@@ -257,7 +266,7 @@ class _AthleteProfilePageState extends State<AthleteProfilePage> {
                           });
                         },
                         children: weightClasses.map((value) {
-                          return Text(value, style: TextStyle(color: Colors.blueAccent));
+                          return Text(value, style: ResponsiveTextStyles.labelMedium(context));
                         }).toList(),
                       ),
                     ),

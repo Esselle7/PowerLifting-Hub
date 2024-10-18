@@ -38,6 +38,7 @@ dependencies:
   shared_preferences: ^2.0.15
   dart_ping: ^9.0.1
   fl_chart: ^0.69.0
+  text_marquee: ^0.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,38 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:gym/Services/standardAppBar.dart';
 import 'package:gym/Theme/responsive_button_style.dart';
+import 'package:gym/Theme/responsive_text_box.dart';
+import 'package:gym/Theme/responsive_text_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:gym/SignUp/General/profile_world_athlete_page.dart';
 import 'package:gym/SignUp/General/profile_world_federation_page.dart';
 import 'package:gym/SignUp/user_profile_state.dart';
 
-// Modello per i dati delle crew
-class Crew {
-  final String name;
-  final String province;
-  final String nation;
-
-  Crew({required this.name, required this.province, required this.nation});
-}
-
-// Lista di test per le top 5 crew della provincia e della nazione
-final List<Crew> provinceTopCrews = [
-  Crew(name: 'Crew A', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew B', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew C', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew D', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew E', province: 'Provincia', nation: 'Nazione'),
+// Lista di test per le top 5 crew della provincia e della nazione in formato JSON
+final List<Map<String, String>> provinceTopCrews = [
+  {"name": "Crew A", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew B", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew C", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew D", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew E", "province": "Provincia", "nation": "Nazione"},
 ];
 
-final List<Crew> nationTopCrews = [
-  Crew(name: 'Crew X', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew Y', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew Z', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew W', province: 'Provincia', nation: 'Nazione'),
-  Crew(name: 'Crew V', province: 'Provincia', nation: 'Nazione'),
+final List<Map<String, String>> nationTopCrews = [
+  {"name": "Crew X", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew Y", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew Z", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew W", "province": "Provincia", "nation": "Nazione"},
+  {"name": "Crew V", "province": "Provincia", "nation": "Nazione"},
 ];
 
 // Simula la chiamata API per ottenere le top 5 crew
-Future<List<Crew>> fetchTopCrews(String type, {required bool testMode}) async {
+Future<List<Map<String, String>>> fetchTopCrews(String type, {required bool testMode}) async {
   if (testMode) {
     if (type == 'province') {
       return Future.delayed(const Duration(seconds: 1), () => provinceTopCrews);
@@ -46,34 +40,16 @@ Future<List<Crew>> fetchTopCrews(String type, {required bool testMode}) async {
 }
 
 // Simula la chiamata API per ottenere le crew
-Future<List<Crew>> fetchCrews({required bool testMode}) async {
+Future<List<Map<String, String>>> fetchCrews({required bool testMode}) async {
   if (testMode) {
     return List.generate(
       30,
-      (index) => Crew(name: 'TestCrew $index', province: 'Provincia', nation: 'Nazione'),
+      (index) => {"name": "TestCrew $index", "province": "Provincia", "nation": "Nazione"},
     );
   } else {
     throw UnimplementedError('API call is not implemented.');
   }
-  return [];
 }
-
-// Modello per i dati delle persone
-class Person {
-  final String name;
-  final Color color;
-
-  Person({required this.name, required this.color});
-}
-
-// Esempio di dati per i cerchietti
-final List<Person> persons = List.generate(
-  30,
-  (index) => Person(
-    name: 'Nome $index',
-    color: Colors.primaries[index % Colors.primaries.length],
-  ),
-);
 
 class ProfileWorldCrewPage extends StatefulWidget {
   final bool testMode;
@@ -87,11 +63,11 @@ class ProfileWorldCrewPage extends StatefulWidget {
 class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
   final FocusNode _focusNode = FocusNode();
 
-  late Future<List<Crew>> _provinceTopCrewsFuture;
-  late Future<List<Crew>> _nationTopCrewsFuture;
+  late Future<List<Map<String, String>>> _provinceTopCrewsFuture;
+  late Future<List<Map<String, String>>> _nationTopCrewsFuture;
 
   final Set<String> _selectedCrews = {};
-  List<Crew> _filteredCrews = [];
+  List<Map<String, String>> _filteredCrews = [];
   String _searchQuery = '';
 
   @override
@@ -112,10 +88,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
   void _updateSearchQuery(String query) {
     setState(() {
       _searchQuery = query;
-      _filteredCrews = persons
-          .where((person) => person.name.toLowerCase().startsWith(_searchQuery.toLowerCase()))
-          .map((person) => Crew(name: person.name, province: '', nation: ''))
-          .toList();
+      _filteredCrews = _filteredCrews.where((crew) => crew['name']!.toLowerCase().startsWith(_searchQuery.toLowerCase())).toList();
     });
   }
 
@@ -129,7 +102,7 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
     });
   }
 
-  void _showBottomSheet(String title, Future<List<Crew>> crewFuture) {
+  void _showBottomSheet(String title, Future<List<Map<String, String>>> crewFuture) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -155,11 +128,11 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.07, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                      style: ResponsiveTextStyles.labelLarge(context),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                     Expanded(
-                      child: FutureBuilder<List<Crew>>(
+                      child: FutureBuilder<List<Map<String, String>>>(
                         future: crewFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -178,10 +151,10 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                                   contentPadding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
                                   leading: CircleAvatar(
                                     backgroundColor: Colors.blue,
-                                    child: Text(crew.name[0], style: TextStyle(color: Colors.blueAccent)),
+                                    child: Text(crew['name']![0], style: ResponsiveTextStyles.labelMedium(context)),
                                   ),
-                                  title: Text(crew.name, style: TextStyle(color: Colors.blueAccent)),
-                                  subtitle: Text('${crew.province}, ${crew.nation}', style: TextStyle(color: Colors.blueAccent)),
+                                  title: Text(crew['name']!, style: ResponsiveTextStyles.labelMedium(context)),
+                                  subtitle: Text('${crew['province']}, ${crew['nation']}', style: ResponsiveTextStyles.labelSmall(context)),
                                 );
                               },
                             );
@@ -208,40 +181,25 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Cerca Persone'),
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.blueAccent,
-        ),
+        appBar: StandardAppBar(title: "Cerca Crews"),
         body: Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Column(
             children: [
-              // Campo di ricerca
-              TextField(
-                focusNode: _focusNode,
-                onChanged: _updateSearchQuery,
-                decoration: InputDecoration(
-                  labelText: 'Digita il nome della tua crew',
-                  labelStyle: TextStyle(color: Colors.blueAccent),
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-                ),
-              ),
+              CustomTextField(labelText: "Inserisci nome crew", icon: Icons.search, onChanged: _updateSearchQuery),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              // Sezione per le crew filtrate
               Expanded(
                 child: _searchQuery.isNotEmpty
                     ? _filteredCrews.isEmpty
                         ? Center(
                             child: Text(
                               'Nessuna crew trovata',
-                              style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueAccent),
+                              style: ResponsiveTextStyles.labelMedium(context),
                             ),
                           )
                         : GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                              crossAxisCount: MediaQuery.of(context).size.width > 350 ? 4 : 3,
                               crossAxisSpacing: MediaQuery.of(context).size.width * 0.02,
                               mainAxisSpacing: MediaQuery.of(context).size.width * 0.02,
                               childAspectRatio: 1,
@@ -249,9 +207,9 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                             itemCount: _filteredCrews.length,
                             itemBuilder: (context, index) {
                               final crew = _filteredCrews[index];
-                              final isSelected = _selectedCrews.contains(crew.name);
+                              final isSelected = _selectedCrews.contains(crew['name']);
                               return GestureDetector(
-                                onTap: () => _toggleSelection(crew.name),
+                                onTap: () => _toggleSelection(crew['name']!),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -284,8 +242,8 @@ class _ProfileWorldCrewPageState extends State<ProfileWorldCrewPage> {
                                     ),
                                     SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                                     Text(
-                                      crew.name,
-                                      style: TextStyle(color: Colors.blueAccent),
+                                      crew['name']!,
+                                      style: ResponsiveTextStyles.labelSmall(context),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],

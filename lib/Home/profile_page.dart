@@ -162,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     Text(
                                       '${data['citta']}',
-                                      style: ResponsiveTextStyles.labelSmall(context),
+                                      style: ResponsiveTextStyles.miniLabel(context),
                                     ),
                                     SizedBox(height: screenHeight * 0.015),
                                     Wrap(
@@ -260,7 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   ),
                                                   child: Text(
                                                     date.substring(5),
-                                                    style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
+                                                    style: ResponsiveTextStyles.miniLabel(context, Colors.blueAccent),
                                                   ),
                                                 ),
                                               );
@@ -285,7 +285,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 axisSide: meta.axisSide,
                                                 child: Text(
                                                   '${value.toInt()} kg',
-                                                  style: ResponsiveTextStyles.labelSmall(context, Colors.blueAccent),
+                                                  style: ResponsiveTextStyles.miniLabel(context, Colors.blueAccent),
                                                 ),
                                               );
                                             }
@@ -418,7 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           SizedBox(width: screenWidth * 0.02),
                                           Text(
                                             'Serie: ${exercise['serie']}',
-                                            style: ResponsiveTextStyles.labelSmall(context),
+                                            style: ResponsiveTextStyles.miniLabel(context),
                                           ),
                                         ],
                                       ),
@@ -428,7 +428,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           SizedBox(width: screenWidth * 0.02),
                                           Text(
                                             'Ripetizioni: ${exercise['rep']}',
-                                            style: ResponsiveTextStyles.labelSmall(context),
+                                            style: ResponsiveTextStyles.miniLabel(context),
                                           ),
                                         ],
                                       ),
@@ -437,11 +437,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(height: screenHeight * 0.01),
                                   Text(
                                     'Note:',
-                                    style: ResponsiveTextStyles.labelSmall(context),
+                                    style: ResponsiveTextStyles.miniLabel(context),
                                   ),
                                   Text(
                                     exercise['note'],
-                                    style: ResponsiveTextStyles.labelSmall(context),
+                                    style: ResponsiveTextStyles.miniLabel(context),
                                   ),
                                 ],
                               ),

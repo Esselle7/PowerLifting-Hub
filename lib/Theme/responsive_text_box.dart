@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 class CustomTextField extends StatelessWidget {
   final String labelText;
   final IconData? icon; // Icona opzionale
+  final TextEditingController? controller; // Controller opzionale
+  final void Function(String)? onChanged;
   
-  CustomTextField({required this.labelText, this.icon});
+  CustomTextField({required this.labelText, this.icon, this.controller, this.onChanged});
   
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,8 @@ class CustomTextField extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02), // Percentuale della larghezza dello schermo
       child: TextField(
+        controller: controller, // Aggiungi il controller qui
+        onChanged: onChanged,
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(color: Colors.blueAccent), // Colore del titolo
@@ -48,12 +52,14 @@ class CustomPasswordTextField extends StatelessWidget {
   final IconData? icon;
   final bool obscureText;
   final String? errorText;
+  final TextEditingController? controller; // Controller opzionale
 
   CustomPasswordTextField({
     required this.labelText,
     this.icon,
     this.obscureText = false,
     this.errorText,
+    this.controller,
   });
 
   @override
@@ -63,6 +69,7 @@ class CustomPasswordTextField extends StatelessWidget {
     final borderWidth = screenWidth * 0.005; // Percentuale della larghezza dello schermo per il bordo
 
     return TextFormField(
+      controller: controller, // Aggiungi il controller qui
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: labelText,
@@ -163,7 +170,7 @@ class NumberTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       focusNode: focusNode,
-      controller: controller,
+      controller: controller, // Aggiungi il controller qui
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -179,6 +186,87 @@ class NumberTextField extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       ),
       onChanged: onChanged,
+    );
+  }
+}
+
+class CustomCarousel extends StatefulWidget {
+  @override
+  _CustomCarouselState createState() => _CustomCarouselState();
+}
+
+class _CustomCarouselState extends State<CustomCarousel> {
+  final PageController _pageController = PageController();
+  String? _selectedType;
+  final List<String> options = ['Certificazione', 'Laurea']; // Aggiungi qui altre opzioni
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return SizedBox(
+      height: 60,
+      child: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: options.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _selectedType = options[index];
+                });
+              },
+              itemBuilder: (context, index) {
+                final option = options[index];
+                return Center(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent, // Sfondo trasparente
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: _selectedType == option ? Colors.blue : Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          color: _selectedType == option ? Colors.blue : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              options.length,
+              (index) => AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                height: 8,
+                width: _pageController.hasClients && _pageController.page == index
+                    ? 24
+                    : 8,
+                decoration: BoxDecoration(
+                  color: _pageController.hasClients && _pageController.page == index
+                      ? Colors.blue
+                      : Colors.grey,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
